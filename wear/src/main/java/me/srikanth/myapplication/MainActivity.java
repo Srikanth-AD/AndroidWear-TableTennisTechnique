@@ -7,7 +7,6 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.wearable.activity.WearableActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,35 +18,35 @@ public class MainActivity extends WearableActivity {
     private Sensor mGravitySensor;
     private Sensor mAccelerometerSensor;
     public SensorEventListener _SensorEventListener;
-    private String gravityValue = "";
-    TextView gravityValueTextView;
-    public String startBackhandPracticeBtnMode = "start";
-    Button startBackhandPracticeButton;
+    private float gravityValue;
     int forwardCount, rescueCount = 0;
+    boolean isBackhandPracticeOngoing = false;
+    Button startBackhandPracticeButton;
+    TextView sessionResultsTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setAmbientEnabled();
-        gravityValueTextView = findViewById(R.id.sessionResults);
+        sessionResultsTextView = findViewById(R.id.sessionResults);
 
         startBackhandPracticeButton = findViewById(R.id.startBackhandPractice);
         startBackhandPracticeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (startBackhandPracticeBtnMode.equals("start")) {
-                    gravityValueTextView.setText("");
+                if (!isBackhandPracticeOngoing) {
+                    sessionResultsTextView.setText("");
                     mSensorManager.registerListener(_SensorEventListener, mGravitySensor, 500000);
                     mSensorManager.registerListener(_SensorEventListener, mAccelerometerSensor, 500000);
-                    startBackhandPracticeBtnMode = "stop";
-                    startBackhandPracticeButton.setText("Stop");
+                    isBackhandPracticeOngoing = true;
+                    startBackhandPracticeButton.setText(R.string.stop);
                 } else {
                     mSensorManager.unregisterListener(_SensorEventListener);
                     forwardCount = 0; // reset counters
                     rescueCount = 0;
-                    startBackhandPracticeBtnMode = "start";
-                    startBackhandPracticeButton.setText("Start");
+                    isBackhandPracticeOngoing = false;
+                    startBackhandPracticeButton.setText(R.string.start);
                 }
             }
         });
@@ -59,34 +58,33 @@ public class MainActivity extends WearableActivity {
         mSensorManager = ((SensorManager) getSystemService(SENSOR_SERVICE));
         mGravitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
         mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        gravityValueTextView = findViewById(R.id.sessionResults);
+        sessionResultsTextView = findViewById(R.id.sessionResults);
 
         _SensorEventListener =  new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
 
                 if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
-                    gravityValue = event.values[1] + "";
+                    gravityValue = event.values[1];
                 }
 
                 if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
 
-                    if (Math.abs(event.values[1]) > 7 && (Double.parseDouble(gravityValue) > 4.4)) {
-                        rescueCount++;
+                    if (Math.abs(event.values[1]) > 7 && gravityValue > 4.4) {
+                        //rescueCount++;
                         triggerVibration();
                     }
 
-                    if (Math.abs(event.values[0]) > 7 && (Double.parseDouble(gravityValue) < 4.4)) {
-                        forwardCount++;
+                    if (Math.abs(event.values[0]) > 7 && gravityValue < 4.4) {
+                        //forwardCount++;
                     }
 
-                    gravityValueTextView.setText("Forward: " + forwardCount + " Rescue: " + rescueCount);
+                    sessionResultsTextView.setText("Forward: " + forwardCount + " Rescue: " + rescueCount);
                 }
             }
 
             @Override
             public void onAccuracyChanged(Sensor sensor, int accuracy) {
-                //Log.d(TAG, accuracy + "");
             }
         };
     }
