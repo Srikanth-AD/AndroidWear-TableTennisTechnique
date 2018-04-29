@@ -18,11 +18,13 @@ public class MainActivity extends WearableActivity {
     private Sensor mGravitySensor;
     private Sensor mAccelerometerSensor;
     public SensorEventListener _SensorEventListener;
-    private float gravityValue;
-    int forwardCount, rescueCount = 0;
-    boolean isBackhandPracticeOngoing = false;
-    Button startBackhandPracticeButton;
     TextView sessionResultsTextView;
+    public String startBackhandPracticeBtnMode = "start";
+    Button startBackhandPracticeButton;
+    int forwardCount, rescueCount = 0;
+    private float gravityValue;
+    private static final float GRAVITY_THRESHOLD = 5.0f;
+    private static final float LINEAR_ACCELERATION_MIN = 8.0f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,17 +37,17 @@ public class MainActivity extends WearableActivity {
         startBackhandPracticeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!isBackhandPracticeOngoing) {
+                if (startBackhandPracticeBtnMode.equals("start")) {
                     sessionResultsTextView.setText("");
                     mSensorManager.registerListener(_SensorEventListener, mGravitySensor, 500000);
                     mSensorManager.registerListener(_SensorEventListener, mAccelerometerSensor, 500000);
-                    isBackhandPracticeOngoing = true;
+                    startBackhandPracticeBtnMode = "stop";
                     startBackhandPracticeButton.setText(R.string.stop);
                 } else {
                     mSensorManager.unregisterListener(_SensorEventListener);
                     forwardCount = 0; // reset counters
                     rescueCount = 0;
-                    isBackhandPracticeOngoing = false;
+                    startBackhandPracticeBtnMode = "start";
                     startBackhandPracticeButton.setText(R.string.start);
                 }
             }
@@ -70,16 +72,17 @@ public class MainActivity extends WearableActivity {
 
                 if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
 
-                    if (Math.abs(event.values[1]) > 7 && gravityValue > 4.4) {
-                        //rescueCount++;
-                        triggerVibration();
+                    if (Math.abs(event.values[0]) > LINEAR_ACCELERATION_MIN
+                            && gravityValue > GRAVITY_THRESHOLD) {
+                        rescueCount++;
                     }
 
-                    if (Math.abs(event.values[0]) > 7 && gravityValue < 4.4) {
-                        //forwardCount++;
+                    if (Math.abs(event.values[0]) > LINEAR_ACCELERATION_MIN
+                            && gravityValue < GRAVITY_THRESHOLD) {
+                        forwardCount++;
                     }
 
-                    sessionResultsTextView.setText("Forward: " + forwardCount + " Rescue: " + rescueCount);
+                    sessionResultsTextView.setText("Forward: " +  " Rescue: ");
                 }
             }
 
