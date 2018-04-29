@@ -7,6 +7,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.wearable.activity.WearableActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -22,9 +23,12 @@ public class MainActivity extends WearableActivity {
     public String startBackhandPracticeBtnMode = "start";
     Button startBackhandPracticeButton;
     int forwardCount, rescueCount = 0;
-    private float gravityValue;
-    private static final float GRAVITY_THRESHOLD = 5.0f;
-    private static final float LINEAR_ACCELERATION_MIN = 8.0f;
+    int gravityPeakValue = 0;
+    int accelerationPeakValue = 0;
+
+    private static final int GRAVITY_THRESHOLD = 4; // to differentiate forward versus upward movement
+    private static final int LINEAR_ACCELERATION_MIN_PEAK_THRESHOLD = 14;
+    private  static final int LINEAR_ACCELERATION_AT_REST = 1;  // due to hand movement, acceleration may never be zero
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,57 +37,90 @@ public class MainActivity extends WearableActivity {
         setAmbientEnabled();
         sessionResultsTextView = findViewById(R.id.sessionResults);
 
-        startBackhandPracticeButton = findViewById(R.id.startBackhandPractice);
-        startBackhandPracticeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (startBackhandPracticeBtnMode.equals("start")) {
-                    sessionResultsTextView.setText("");
-                    mSensorManager.registerListener(_SensorEventListener, mGravitySensor, 500000);
-                    mSensorManager.registerListener(_SensorEventListener, mAccelerometerSensor, 500000);
-                    startBackhandPracticeBtnMode = "stop";
-                    startBackhandPracticeButton.setText(R.string.stop);
-                } else {
-                    mSensorManager.unregisterListener(_SensorEventListener);
-                    forwardCount = 0; // reset counters
-                    rescueCount = 0;
-                    startBackhandPracticeBtnMode = "start";
-                    startBackhandPracticeButton.setText(R.string.start);
-                }
-            }
-        });
+        try {
+            startBackhandPracticeButton = findViewById(R.id.startBackhandPractice);
+            startBackhandPracticeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (startBackhandPracticeBtnMode.equals("start")) {
 
-        getSensorData();
+                        // reset counters
+                        resetCountsPerRepetition();
+                        forwardCount = 0;
+                        rescueCount = 0;
+
+                        sessionResultsTextView.setText("");
+                        mSensorManager.registerListener(_SensorEventListener, mGravitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+                        mSensorManager.registerListener(_SensorEventListener, mAccelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                        startBackhandPracticeBtnMode = "stop";
+                        startBackhandPracticeButton.setText(R.string.stop);
+
+                    } else {
+                        mSensorManager.unregisterListener(_SensorEventListener);
+                        startBackhandPracticeBtnMode = "start";
+                        startBackhandPracticeButton.setText(R.string.start);
+                    }
+                }
+            });
+            getSensorData();
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
     }
 
     private void getSensorData() {
         mSensorManager = ((SensorManager) getSystemService(SENSOR_SERVICE));
         mGravitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
         mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        sessionResultsTextView = findViewById(R.id.sessionResults);
 
         _SensorEventListener =  new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
 
                 if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
-                    gravityValue = event.values[1];
+
+                    if (event.values[1] > gravityPeakValue) {
+                        gravityPeakValue = (int) event.values[1];
+                    }
                 }
 
                 if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
 
-                    if (Math.abs(event.values[0]) > LINEAR_ACCELERATION_MIN
-                            && gravityValue > GRAVITY_THRESHOLD) {
-                        rescueCount++;
+                    Log.d(TAG, "Linear Acc. X: " + Math.abs(event.values[0]));
+
+                    if (Math.abs(event.values[0]) > accelerationPeakValue) {
+                        accelerationPeakValue = (int) Math.abs(event.values[0]);
                     }
 
-                    if (Math.abs(event.values[0]) > LINEAR_ACCELERATION_MIN
-                            && gravityValue < GRAVITY_THRESHOLD) {
+                    // Forward rep. and reset
+                    if (Math.abs(event.values[0]) < LINEAR_ACCELERATION_AT_REST
+                            && accelerationPeakValue > LINEAR_ACCELERATION_MIN_PEAK_THRESHOLD
+                            && gravityPeakValue < GRAVITY_THRESHOLD) {
+
                         forwardCount++;
+                        resetCountsPerRepetition();
+
+                        // On count increment, update results on UI
+                        sessionResultsTextView.setText("Forward: " + forwardCount + " Rescue: " + rescueCount);
+
+                        Log.d(TAG, "Forward count: " + forwardCount);
                     }
 
-                    sessionResultsTextView.setText("Forward: " +  " Rescue: ");
+                    if (Math.abs(event.values[0]) < LINEAR_ACCELERATION_AT_REST &&
+                            accelerationPeakValue > LINEAR_ACCELERATION_MIN_PEAK_THRESHOLD &&
+                            gravityPeakValue > GRAVITY_THRESHOLD) {
+
+                        rescueCount++;
+                        resetCountsPerRepetition();
+
+                        triggerVibration();
+
+                        // On count change, update results
+                        sessionResultsTextView.setText("Forward: " + forwardCount + " Rescue: " + rescueCount);
+                    }
                 }
+
+                Log.d(TAG, "Peak Gravity: " + gravityPeakValue  + " Peak Acceleration: " + accelerationPeakValue);
             }
 
             @Override
@@ -92,14 +129,22 @@ public class MainActivity extends WearableActivity {
         };
     }
 
+    public void resetCountsPerRepetition() {
+        gravityPeakValue = 0;
+        accelerationPeakValue = 0;
+    }
+
     public void triggerVibration() {
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        vibrator.vibrate(150);
+        if (vibrator != null) {
+            vibrator.vibrate(150);
+        }
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onPause() {
+        super.onPause();
+        mSensorManager.unregisterListener(_SensorEventListener);
     }
 
     @Override
@@ -107,4 +152,5 @@ public class MainActivity extends WearableActivity {
         super.onStop();
         mSensorManager.unregisterListener(_SensorEventListener);
     }
+
 }
