@@ -50,8 +50,15 @@ public class MainActivity extends WearableActivity {
                         rescueCount = 0;
 
                         sessionResultsTextView.setText("");
-                        mSensorManager.registerListener(_SensorEventListener, mGravitySensor, SensorManager.SENSOR_DELAY_NORMAL);
-                        mSensorManager.registerListener(_SensorEventListener, mAccelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+                        if (mGravitySensor != null) {
+                            mSensorManager.registerListener(_SensorEventListener, mGravitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+                        }
+
+                        if (mAccelerometerSensor != null) {
+                            mSensorManager.registerListener(_SensorEventListener, mAccelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                        }
+
                         startBackhandPracticeBtnMode = "stop";
                         startBackhandPracticeButton.setText(R.string.stop);
 
@@ -93,7 +100,7 @@ public class MainActivity extends WearableActivity {
                     }
 
                     // Forward rep. and reset
-                    if (Math.abs(event.values[0]) < LINEAR_ACCELERATION_AT_REST
+                    if (Math.abs(event.values[0]) <= LINEAR_ACCELERATION_AT_REST
                             && accelerationPeakValue > LINEAR_ACCELERATION_MIN_PEAK_THRESHOLD
                             && gravityPeakValue < GRAVITY_THRESHOLD) {
 
