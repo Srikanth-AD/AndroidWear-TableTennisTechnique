@@ -10,7 +10,7 @@
     tools:context=".MainActivity"
     tools:deviceIds="wear">
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/MainActivityFrameLayout"
@@ -31,21 +31,23 @@
         <Button
             android:id="@+id/startBackhandPractice"
             android:layout_width="100dp"
-            android:textSize="18dp"
-            android:textColor="@color/white"
-            android:background="@color/dark_grey"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_below="@+id/headingText"
             android:layout_gravity="center"
-            android:text="@string/start" />
+            android:layout_marginBottom="8dp"
+            android:background="@color/dark_grey"
+            android:gravity="center"
+            android:text="@string/start"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/sessionResults"
+            android:layout_below="@+id/startBackhandPractice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center|bottom"
-            android:layout_marginBottom="9dp"
-            android:text="" />
+            android:layout_marginBottom="9dp" />
 
-    </FrameLayout>
+    </RelativeLayout>
 </android.support.wear.widget.BoxInsetLayout>
