@@ -85,7 +85,7 @@ public class MainActivity extends WearableActivity {
                 if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 
                     if (event.values[1] > accelerometerYPeakValue)
-                        accelerometerYPeakValue = (int) event.values[1];
+                        accelerometerYPeakValue = event.values[1];
                 }
 
                 if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
@@ -99,14 +99,14 @@ public class MainActivity extends WearableActivity {
                             && accelerometerYPeakValue < ACCELEROMETER_THRESHOLD) {
 
                         forwardCount++;
+                        Log.d(TAG, "Forward count: " + forwardCount);
                         resetCountsPerRepetition();
 
-                        sessionResultsTextView.setText(String.valueOf(R.string.forward)
+                        sessionResultsTextView.setText("Forward: "
                                 .concat(String.valueOf(forwardCount))
-                                .concat(String.valueOf(R.string.rescue))
+                                .concat(" Rescue: ")
                                 .concat(String.valueOf(rescueCount)));
 
-                        Log.d(TAG, "Forward count: " + forwardCount);
                     }
 
                     if (Math.abs(event.values[0]) < MAX_LINEAR_ACCELERATION_AT_REST &&
@@ -114,12 +114,13 @@ public class MainActivity extends WearableActivity {
                             accelerometerYPeakValue > ACCELEROMETER_THRESHOLD) {
 
                         rescueCount++;
+                        Log.d(TAG, "Rescue count: " + rescueCount);
                         resetCountsPerRepetition();
                         triggerVibration();
 
-                        sessionResultsTextView.setText(String.valueOf(R.string.forward)
+                        sessionResultsTextView.setText("Forward: "
                                 .concat(String.valueOf(forwardCount))
-                                .concat(String.valueOf(R.string.rescue))
+                                .concat(" Rescue: ")
                                 .concat(String.valueOf(rescueCount)));
                     }
                 }
