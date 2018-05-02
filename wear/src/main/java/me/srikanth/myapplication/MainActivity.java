@@ -26,8 +26,8 @@ public class MainActivity extends WearableActivity {
     double accelerometerYPeakValue = 0;
     int accelerationPeakValue = 0;
 
-    private static final double ACCELEROMETER_THRESHOLD = 4.6; // to differentiate forward versus upward movement
-    private static final int MIN_LINEAR_ACCELERATION_AT_PEAK = 14; // minimum acceptable peak acceleration during a rep
+    private static final double ACCELEROMETER_THRESHOLD = 5.4; // to differentiate forward versus upward movement
+    private static final int MIN_LINEAR_ACCELERATION_AT_PEAK = 15; // minimum acceptable peak acceleration during a rep
     private  static final int MAX_LINEAR_ACCELERATION_AT_REST = 2;  // due to hand movement, acceleration may never be zero
 
     @Override
@@ -99,6 +99,7 @@ public class MainActivity extends WearableActivity {
                             && accelerometerYPeakValue < ACCELEROMETER_THRESHOLD) {
 
                         forwardCount++;
+                        Log.d(TAG, "Accelerometer Y Peak: " + accelerometerYPeakValue);
                         Log.d(TAG, "Forward count: " + forwardCount);
                         resetCountsPerRepetition();
 
@@ -114,6 +115,7 @@ public class MainActivity extends WearableActivity {
                             accelerometerYPeakValue > ACCELEROMETER_THRESHOLD) {
 
                         rescueCount++;
+                        Log.d(TAG, "Accelerometer Y Peak: " + accelerometerYPeakValue);
                         Log.d(TAG, "Rescue count: " + rescueCount);
                         resetCountsPerRepetition();
                         triggerVibration();
