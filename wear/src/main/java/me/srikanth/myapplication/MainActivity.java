@@ -17,18 +17,18 @@ public class MainActivity extends WearableActivity {
     private static final String TAG = "MainActivity";
     private SensorManager mSensorManager;
     private Sensor mLinearAcceleration;
-    private Sensor mAccelerometer;
+    private Sensor mGravitySensor;
     public SensorEventListener _SensorEventListener;
     TextView sessionResultsTextView;
     public String startBackhandPracticeBtnMode = "start";
     Button startBackhandPracticeButton;
     int forwardCount, rescueCount = 0;
-    double accelerometerYPeakValue = 0;
+    double gravityXPeakValue = 0;
     int accelerationPeakValue = 0;
 
-    private static final double ACCELEROMETER_THRESHOLD = 5.4; // to differentiate forward versus upward movement
-    private static final int MIN_LINEAR_ACCELERATION_AT_PEAK = 15; // minimum acceptable peak acceleration during a rep
-    private  static final int MAX_LINEAR_ACCELERATION_AT_REST = 2;  // due to hand movement, acceleration may never be zero
+    private static final float GRAVITY_THRESHOLD = 6.0f; // to differentiate forward versus upward movement
+    private static final int MIN_LINEAR_ACCELERATION_AT_PEAK = 18; // minimum acceptable peak acceleration during a rep
+    private  static final int MAX_LINEAR_ACCELERATION_AT_REST = 2;  // due to normal hand movement, acceleration may never be zero
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +40,7 @@ public class MainActivity extends WearableActivity {
 
         mSensorManager = ((SensorManager) getSystemService(SENSOR_SERVICE));
         mLinearAcceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mGravitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
 
         startBackhandPracticeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,9 +53,9 @@ public class MainActivity extends WearableActivity {
 
                     sessionResultsTextView.setText("");
 
-                    if (mAccelerometer != null)
+                    if (mGravitySensor != null)
                         mSensorManager.registerListener(_SensorEventListener,
-                                mAccelerometer,
+                                mGravitySensor,
                                 SensorManager.SENSOR_DELAY_NORMAL);
 
                     if (mLinearAcceleration != null)
@@ -82,10 +82,10 @@ public class MainActivity extends WearableActivity {
             @Override
             public void onSensorChanged(SensorEvent event) {
 
-                if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
 
-                    if (event.values[1] > accelerometerYPeakValue)
-                        accelerometerYPeakValue = event.values[1];
+                    if (event.values[0] > gravityXPeakValue)
+                        gravityXPeakValue = event.values[0];
                 }
 
                 if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
@@ -96,10 +96,10 @@ public class MainActivity extends WearableActivity {
                     // Forward rep. and reset
                     if (Math.abs(event.values[0]) <= MAX_LINEAR_ACCELERATION_AT_REST
                             && accelerationPeakValue > MIN_LINEAR_ACCELERATION_AT_PEAK
-                            && accelerometerYPeakValue < ACCELEROMETER_THRESHOLD) {
+                            && gravityXPeakValue < GRAVITY_THRESHOLD) {
 
                         forwardCount++;
-                        Log.d(TAG, "Accelerometer Y Peak: " + accelerometerYPeakValue);
+                        Log.d(TAG, "Gravity X Peak: " + gravityXPeakValue);
                         Log.d(TAG, "Forward count: " + forwardCount);
                         resetCountsPerRepetition();
 
@@ -112,10 +112,10 @@ public class MainActivity extends WearableActivity {
 
                     if (Math.abs(event.values[0]) < MAX_LINEAR_ACCELERATION_AT_REST &&
                             accelerationPeakValue > MIN_LINEAR_ACCELERATION_AT_PEAK &&
-                            accelerometerYPeakValue > ACCELEROMETER_THRESHOLD) {
+                            gravityXPeakValue > GRAVITY_THRESHOLD) {
 
                         rescueCount++;
-                        Log.d(TAG, "Accelerometer Y Peak: " + accelerometerYPeakValue);
+                        Log.d(TAG, "Gravity X Peak: " + gravityXPeakValue);
                         Log.d(TAG, "Rescue count: " + rescueCount);
                         resetCountsPerRepetition();
                         triggerVibration();
@@ -135,7 +135,7 @@ public class MainActivity extends WearableActivity {
     }
 
     public void resetCountsPerRepetition() {
-        accelerometerYPeakValue = 0;
+        gravityXPeakValue = 0;
         accelerationPeakValue = 0;
     }
 
