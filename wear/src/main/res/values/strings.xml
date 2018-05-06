@@ -4,7 +4,8 @@
     values-round/strings.xml for round devices.
     -->
     <string name="app_name">Table Tennis Technique</string>
-    <string name="backhand_practice">Backhand Drive</string>
+    <string name="backhand_drive">Backhand Drive</string>
+    <string name="forehand_drive">Forehand Drive</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="forward">Forward</string>

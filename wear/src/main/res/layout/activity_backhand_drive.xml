@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:text="@string/backhand_practice"
+            android:text="@string/backhand_drive"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:textAppearance="@android:style/TextAppearance.Material.Medium" />
