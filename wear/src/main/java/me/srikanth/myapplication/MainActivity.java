@@ -43,8 +43,7 @@ public class MainActivity extends WearableActivity {
         rescueCountTextView = findViewById(R.id.rescueCountTextView);
         startBackhandPracticeButton = findViewById(R.id.startBackhandPractice);
 
-        forwardCountTextView.setText(String.valueOf(0));
-        rescueCountTextView.setText(String.valueOf(0));
+        resetCountsPerSession();
 
         mSensorManager = ((SensorManager) getSystemService(SENSOR_SERVICE));
         mLinearAcceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
@@ -55,10 +54,8 @@ public class MainActivity extends WearableActivity {
             public void onClick(View view) {
                 if (!isPracticeOngoing) {
 
-                    resetCountsPerSession(); // reset counters
-                    resetCountsPerRep();
-                    forwardCountTextView.setText(String.valueOf(0));
-                    rescueCountTextView.setText(String.valueOf(0));
+                    resetCountsPerSession();
+                    resetPeakValuesPerRep();
 
                     if (mGravitySensor != null) {
                         mSensorManager.registerListener(_SensorEventListener,
@@ -100,8 +97,7 @@ public class MainActivity extends WearableActivity {
 
                     // acceleration peak & gravity peak are no longer valid after TIME_THRESHOLD_NS
                     if (event.timestamp - accelerationPeakTimestamp > TIME_THRESHOLD_NS) {
-                        accelerationPeakValue = 0;
-                        gravityPeak = 0.0f;
+                        resetPeakValuesPerRep();
                     }
 
                     if (Math.abs(event.values[0]) > accelerationPeakValue) {
@@ -113,18 +109,13 @@ public class MainActivity extends WearableActivity {
                             Math.abs(event.values[0]) <= MAX_LINEAR_ACCELERATION_AT_REST &&
                             accelerationPeakValue > MIN_LINEAR_ACCELERATION_AT_PEAK) {
 
-                        // forward
                         if (gravityPeak <= GRAVITY_THRESHOLD) {
-                           forwardCount++;
-                           forwardCountTextView.setText(String.valueOf(forwardCount));
+                            incrementForwardCount();
                         } else {
-                            // rescue
-                            triggerVibration();
-                            rescueCount++;
-                           rescueCountTextView.setText(String.valueOf(rescueCount));
+                            incrementRescueCount();
                         }
 
-                        resetCountsPerRep();
+                        resetPeakValuesPerRep();
                     }
                 }
             }
@@ -135,7 +126,18 @@ public class MainActivity extends WearableActivity {
         };
     }
 
-    public void resetCountsPerRep() {
+    public void incrementForwardCount() {
+        forwardCount++;
+        forwardCountTextView.setText(String.valueOf(forwardCount));
+    }
+
+    public void incrementRescueCount() {
+        triggerVibration();
+        rescueCount++;
+        rescueCountTextView.setText(String.valueOf(rescueCount));
+    }
+
+    public void resetPeakValuesPerRep() {
         accelerationPeakValue = 0;
         gravityPeak = 0.0f;
     }
@@ -143,6 +145,8 @@ public class MainActivity extends WearableActivity {
     public void resetCountsPerSession() {
         forwardCount = 0;
         rescueCount = 0;
+        forwardCountTextView.setText(String.valueOf(forwardCount));
+        rescueCountTextView.setText(String.valueOf(rescueCount));
     }
 
     public void triggerVibration() {
