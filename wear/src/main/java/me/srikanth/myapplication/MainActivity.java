@@ -20,16 +20,14 @@ public class MainActivity extends WearableActivity {
     public SensorEventListener _SensorEventListener;
     TextView forwardCountTextView;
     TextView rescueCountTextView;
-    public String startBackhandPracticeBtnMode = "start";
     Button startBackhandPracticeButton;
+    public boolean isPracticeOngoing = false;
     int forwardCount, rescueCount = 0;
     int accelerationPeakValue = 0;
     float gravityPeak = 0.0f;
-    private long mLastTime = 0;
     private long accelerationPeakTimestamp = 0;
-    private boolean mUp = false;
 
-    private static final float GRAVITY_THRESHOLD = 6.5f; // to differentiate forward versus upward movement
+    private static final float GRAVITY_THRESHOLD = 5.2f; // to differentiate forward versus upward movement
     private static final int MIN_LINEAR_ACCELERATION_AT_PEAK = 15; // minimum acceptable peak acceleration during a rep
     private  static final int MAX_LINEAR_ACCELERATION_AT_REST = 3;  // due to normal hand movement, acceleration may never be zero
     private static final long TIME_THRESHOLD_NS = 2000000000; // in nanoseconds (= 2sec)
@@ -40,13 +38,13 @@ public class MainActivity extends WearableActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setAmbientEnabled();
+
         forwardCountTextView = findViewById(R.id.forwardCountTextView);
         rescueCountTextView = findViewById(R.id.rescueCountTextView);
+        startBackhandPracticeButton = findViewById(R.id.startBackhandPractice);
 
         forwardCountTextView.setText(String.valueOf(0));
         rescueCountTextView.setText(String.valueOf(0));
-
-                startBackhandPracticeButton = findViewById(R.id.startBackhandPractice);
 
         mSensorManager = ((SensorManager) getSystemService(SENSOR_SERVICE));
         mLinearAcceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
@@ -55,30 +53,31 @@ public class MainActivity extends WearableActivity {
         startBackhandPracticeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (startBackhandPracticeBtnMode.equals("start")) {
+                if (!isPracticeOngoing) {
 
-                    // reset counters
-                    resetCountsPerSession();
+                    resetCountsPerSession(); // reset counters
                     resetCountsPerRep();
+                    forwardCountTextView.setText(String.valueOf(0));
+                    rescueCountTextView.setText(String.valueOf(0));
 
-                    if (mGravitySensor != null)
+                    if (mGravitySensor != null) {
                         mSensorManager.registerListener(_SensorEventListener,
                                 mGravitySensor,
                                 SensorManager.SENSOR_DELAY_NORMAL);
-
-                    if (mLinearAcceleration != null)
+                    }
+                    if (mLinearAcceleration != null) {
                         mSensorManager.registerListener(_SensorEventListener,
                                 mLinearAcceleration,
                                 SensorManager.SENSOR_DELAY_NORMAL);
+                    }
 
-                    startBackhandPracticeBtnMode = "stop";
                     startBackhandPracticeButton.setText(R.string.stop);
 
                 } else {
                     mSensorManager.unregisterListener(_SensorEventListener);
-                    startBackhandPracticeBtnMode = "start";
                     startBackhandPracticeButton.setText(R.string.start);
                 }
+                isPracticeOngoing = !isPracticeOngoing;
             }
         });
         getSensorData();
@@ -90,16 +89,21 @@ public class MainActivity extends WearableActivity {
             @Override
             public void onSensorChanged(SensorEvent event) {
 
-                mLastTime = event.timestamp;
+                if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
+
+                    if (Math.abs(event.values[0]) > gravityPeak) {
+                        gravityPeak = Math.abs(event.values[0]);
+                    }
+                }
 
                 if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
 
+                    // acceleration peak & gravity peak are no longer valid after TIME_THRESHOLD_NS
                     if (event.timestamp - accelerationPeakTimestamp > TIME_THRESHOLD_NS) {
-                        accelerationPeakValue = 0; // acceleration peak & gravity peak are no longer valid
+                        accelerationPeakValue = 0;
                         gravityPeak = 0.0f;
                     }
 
-                    // Forward movement
                     if (Math.abs(event.values[0]) > accelerationPeakValue) {
                         accelerationPeakValue = (int) Math.abs(event.values[0]);
                         accelerationPeakTimestamp = event.timestamp;
@@ -107,28 +111,20 @@ public class MainActivity extends WearableActivity {
 
                     if (event.timestamp - accelerationPeakTimestamp < TIME_THRESHOLD_NS &&
                             Math.abs(event.values[0]) <= MAX_LINEAR_ACCELERATION_AT_REST &&
-                            accelerationPeakValue > MIN_LINEAR_ACCELERATION_AT_PEAK &&
-                            gravityPeak < GRAVITY_THRESHOLD) {
-                        forwardCount++;
-                        resetCountsPerRep();
-                        forwardCountTextView.setText(String.valueOf(forwardCount));
-                    }
-                }
+                            accelerationPeakValue > MIN_LINEAR_ACCELERATION_AT_PEAK) {
 
-                if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
-
-                    if (Math.abs(event.values[0]) > gravityPeak) {
-                        gravityPeak = Math.abs(event.values[0]);
-                    }
-
-                    // Upward and downward movement
-                    if ((Math.abs(event.values[0]) > GRAVITY_THRESHOLD)) {
-
-                        if (event.timestamp - mLastTime < TIME_THRESHOLD_NS &&
-                                mUp != (event.values[0] > 0)) {
-                            onStrokeDetected(!mUp, accelerationPeakValue);
+                        // forward
+                        if (gravityPeak <= GRAVITY_THRESHOLD) {
+                           forwardCount++;
+                           forwardCountTextView.setText(String.valueOf(forwardCount));
+                        } else {
+                            // rescue
+                            triggerVibration();
+                            rescueCount++;
+                           rescueCountTextView.setText(String.valueOf(rescueCount));
                         }
-                        mUp = event.values[0] > 0;
+
+                        resetCountsPerRep();
                     }
                 }
             }
@@ -137,21 +133,6 @@ public class MainActivity extends WearableActivity {
             public void onAccuracyChanged(Sensor sensor, int accuracy) {
             }
         };
-    }
-
-    /**
-     * Called on detection of a successful down -> up or up -> down movement of hand.
-     */
-    private void onStrokeDetected(boolean up, int accelerationPeak) {
-        // we only count a pair of up and down as one successful movement
-        // check for acceleration peak helps avoid simple up/down hand movement without any acceleration
-        if (up || accelerationPeak < MIN_LINEAR_ACCELERATION_AT_PEAK) {
-            return;
-        }
-        rescueCount++;
-        triggerVibration();
-        rescueCountTextView.setText(String.valueOf(rescueCount));
-        resetCountsPerRep();
     }
 
     public void resetCountsPerRep() {
