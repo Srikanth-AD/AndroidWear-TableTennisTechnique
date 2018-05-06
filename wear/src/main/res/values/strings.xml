@@ -7,8 +7,6 @@
     <string name="backhand_practice">Backhand Form</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
-    <string name="forward_count">Forward count: </string>
     <string name="forward">Forward</string>
     <string name="rescue">Rescue</string>
-    <string name="rescue_count">Rescue count: </string>
 </resources>
