@@ -7,7 +7,6 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.wearable.activity.WearableActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,7 +18,8 @@ public class MainActivity extends WearableActivity {
     private Sensor mLinearAcceleration;
     private Sensor mGravitySensor;
     public SensorEventListener _SensorEventListener;
-    TextView sessionResultsTextView;
+    TextView forwardCountTextView;
+    TextView rescueCountTextView;
     public String startBackhandPracticeBtnMode = "start";
     Button startBackhandPracticeButton;
     int forwardCount, rescueCount = 0;
@@ -40,8 +40,13 @@ public class MainActivity extends WearableActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setAmbientEnabled();
-        sessionResultsTextView = findViewById(R.id.sessionResults);
-        startBackhandPracticeButton = findViewById(R.id.startBackhandPractice);
+        forwardCountTextView = findViewById(R.id.forwardCountTextView);
+        rescueCountTextView = findViewById(R.id.rescueCountTextView);
+
+        forwardCountTextView.setText(String.valueOf(0));
+        rescueCountTextView.setText(String.valueOf(0));
+
+                startBackhandPracticeButton = findViewById(R.id.startBackhandPractice);
 
         mSensorManager = ((SensorManager) getSystemService(SENSOR_SERVICE));
         mLinearAcceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
@@ -55,8 +60,6 @@ public class MainActivity extends WearableActivity {
                     // reset counters
                     resetCountsPerSession();
                     resetCountsPerRep();
-
-                    sessionResultsTextView.setText(" Forward: 0 Rescue: 0");
 
                     if (mGravitySensor != null)
                         mSensorManager.registerListener(_SensorEventListener,
@@ -108,7 +111,7 @@ public class MainActivity extends WearableActivity {
                             gravityPeak < GRAVITY_THRESHOLD) {
                         forwardCount++;
                         resetCountsPerRep();
-                        sessionResultsTextView.setText(" Forward: " + String.valueOf(forwardCount) + " Rescue: " + String.valueOf(rescueCount));
+                        forwardCountTextView.setText(String.valueOf(forwardCount));
                     }
                 }
 
@@ -147,7 +150,7 @@ public class MainActivity extends WearableActivity {
         }
         rescueCount++;
         triggerVibration();
-        sessionResultsTextView.setText(" Forward: " + String.valueOf(forwardCount) + " Rescue: " + String.valueOf(rescueCount));
+        rescueCountTextView.setText(String.valueOf(rescueCount));
         resetCountsPerRep();
     }
 
