@@ -10,4 +10,8 @@
     <string name="stop">Stop</string>
     <string name="forward">Forward</string>
     <string name="rescue">Rescue</string>
+    <string-array name="tabletennis_strokes">
+        <item>Backhand Drive</item>
+        <item>Forehand Drive</item>
+    </string-array>
 </resources>
