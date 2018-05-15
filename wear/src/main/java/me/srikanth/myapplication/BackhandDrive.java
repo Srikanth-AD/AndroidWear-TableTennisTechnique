@@ -124,23 +124,23 @@ public class BackhandDrive extends WearableActivity {
         };
     }
 
-    public void incrementForwardCount() {
+    private void incrementForwardCount() {
         forwardCount++;
         forwardCountTextView.setText(String.valueOf(forwardCount));
     }
 
-    public void incrementRescueCount() {
+    private void incrementRescueCount() {
         Utils.triggerVibration(this);
         rescueCount++;
         rescueCountTextView.setText(String.valueOf(rescueCount));
     }
 
-    public void resetPeakValuesPerRep() {
+    private void resetPeakValuesPerRep() {
         accelerationPeakValue = 0;
         gravityPeak = 0.0f;
     }
 
-    public void resetCountsPerSession() {
+    private void resetCountsPerSession() {
         forwardCount = 0;
         rescueCount = 0;
         forwardCountTextView.setText(String.valueOf(forwardCount));
