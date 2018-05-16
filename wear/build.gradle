@@ -18,9 +18,10 @@ android {
 }
 
 dependencies {
+    def lifecycle_version = "1.1.1"
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.google.android.support:wearable:2.3.0'
-    implementation 'com.google.android.gms:play-services-wearable:12.0.1'
+    implementation 'com.google.android.gms:play-services-wearable:15.0.1'
     implementation 'com.android.support:percent:26.1.0'
     implementation 'com.android.support:support-v4:26.1.0'
     implementation 'com.android.support:recyclerview-v7:26.1.0'
@@ -28,4 +29,8 @@ dependencies {
     compileOnly 'com.google.android.wearable:wearable:2.3.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.android.support:design:26.1.0'
+    implementation "android.arch.lifecycle:extensions:$lifecycle_version"
+    implementation "android.arch.lifecycle:viewmodel:$lifecycle_version"
+    implementation "android.arch.lifecycle:reactivestreams:$lifecycle_version"
+    annotationProcessor "android.arch.lifecycle:compiler:$lifecycle_version"
 }

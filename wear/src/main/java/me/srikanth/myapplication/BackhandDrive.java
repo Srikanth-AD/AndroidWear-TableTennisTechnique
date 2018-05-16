@@ -1,16 +1,20 @@
 package me.srikanth.myapplication;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.support.wearable.activity.WearableActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class BackhandDrive extends WearableActivity {
+public class BackhandDrive extends FragmentActivity {
 
     private SensorManager mSensorManager;
     private Sensor mLinearAcceleration;
@@ -34,7 +38,7 @@ public class BackhandDrive extends WearableActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_backhand_drive);
-        setAmbientEnabled();
+        //setAmbientEnabled();
 
         forwardCountTextView = findViewById(R.id.forwardCountTextView);
         rescueCountTextView = findViewById(R.id.rescueCountTextView);
@@ -45,6 +49,17 @@ public class BackhandDrive extends WearableActivity {
         mSensorManager = ((SensorManager) getSystemService(SENSOR_SERVICE));
         mLinearAcceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         mGravitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+
+        /* test */
+        SharedViewModel mModel = ViewModelProviders.of(this).get(SharedViewModel.class);
+        final Observer<String> nameObserver = new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable final String newName) {
+                Log.d("mode name", newName);
+            }
+        };
+        mModel.getmCurrentMode().observe(this, nameObserver);
+        /* end test */
 
         startBackhandPracticeButton.setOnClickListener(new View.OnClickListener() {
             @Override
