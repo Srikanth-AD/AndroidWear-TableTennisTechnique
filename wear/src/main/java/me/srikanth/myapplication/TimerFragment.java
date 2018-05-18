@@ -12,11 +12,11 @@ public class TimerFragment extends Fragment {
     private SharedViewModel model;
 
     // Modes: inactive, started, paused, resumed, stopped
-    private static final String MODE_INACTIVE = "inactive";
-    private static final String MODE_STARTED = "started";
-    private static final String MODE_PAUSED = "paused";
-    private static final String MODE_RESUMED = "resumed";
-    private static final String MODE_STOPPED = "stopped";
+    public static final String MODE_INACTIVE = "inactive";
+    public static final String MODE_STARTED = "started";
+    public static final String MODE_PAUSED = "paused";
+    public static final String MODE_RESUMED = "resumed";
+    public static final String MODE_STOPPED = "stopped";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
