@@ -22,7 +22,6 @@ public class BackhandDrive extends FragmentActivity {
     TextView forwardCountTextView;
     TextView rescueCountTextView;
     Button startBackhandPracticeButton;
-    public boolean isPracticeOngoing = false;
     int forwardCount, rescueCount = 0;
     int accelerationPeakValue = 0;
     float gravityPeak = 0.0f;
