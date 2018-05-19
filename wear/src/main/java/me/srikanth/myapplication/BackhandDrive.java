@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -36,7 +37,7 @@ public class BackhandDrive extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_backhand_drive);
-
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // @todo add ambient mode support
         forwardCountTextView = findViewById(R.id.forwardCountTextView);
         rescueCountTextView = findViewById(R.id.rescueCountTextView);
         startBackhandPracticeButton = findViewById(R.id.startBackhandPractice);
