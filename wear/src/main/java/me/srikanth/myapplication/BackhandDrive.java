@@ -2,6 +2,7 @@ package me.srikanth.myapplication;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -27,6 +28,7 @@ public class BackhandDrive extends FragmentActivity {
     int accelerationPeakValue = 0;
     float gravityPeak = 0.0f;
     private long accelerationPeakTimestamp = 0;
+    private SharedViewModel mModel;
 
     private static final float GRAVITY_THRESHOLD = 5.4f; // to differentiate forward versus upward movement
     private static final int MIN_LINEAR_ACCELERATION_AT_PEAK = 10; // minimum acceptable peak acceleration during a rep
@@ -48,7 +50,7 @@ public class BackhandDrive extends FragmentActivity {
         mLinearAcceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         mGravitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
 
-        SharedViewModel mModel = ViewModelProviders.of(this).get(SharedViewModel.class);
+        mModel = ViewModelProviders.of(this).get(SharedViewModel.class);
         final Observer<String> timerObserver = new Observer<String>() {
             @Override
             public void onChanged(@Nullable final String newModeName) {
@@ -88,6 +90,14 @@ public class BackhandDrive extends FragmentActivity {
                         ) {
 
                     mSensorManager.unregisterListener(_SensorEventListener);
+                }
+
+                // On Stop, display summary
+                if (newModeName != null && newModeName.equals(TimerFragment.MODE_STOPPED)) {
+                    Intent i = new Intent(getApplicationContext(), SummaryActivity.class);
+                    i.putExtra("startTime", mModel.getStartTime().getValue());
+                    i.putExtra("stopTime", mModel.getStopTime().getValue());
+                    startActivity(i);
                 }
             }
         };

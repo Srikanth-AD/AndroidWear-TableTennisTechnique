@@ -34,7 +34,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".BackhandDrive" />
-        <activity android:name=".ForehandDrive"></activity>
+        <activity android:name=".ForehandDrive" />
+        <activity android:name=".SummaryActivity"></activity>
     </application>
 
 </manifest>

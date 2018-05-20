@@ -1,7 +1,8 @@
 package me.srikanth.myapplication;
-import android.support.v4.app.Fragment;
+
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ public class TimerFragment extends Fragment {
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                model.getStartTime().setValue(System.currentTimeMillis());
                 model.getmCurrentMode().setValue(MODE_STARTED);
                 startBtn.setVisibility(View.GONE);
                 pauseBtn.setVisibility(View.VISIBLE);
@@ -62,6 +64,7 @@ public class TimerFragment extends Fragment {
         stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                model.getStopTime().setValue(System.currentTimeMillis());
                 model.getmCurrentMode().setValue(MODE_STOPPED);
                 resumeBtn.setVisibility(View.GONE);
                 stopBtn.setVisibility(View.GONE);
