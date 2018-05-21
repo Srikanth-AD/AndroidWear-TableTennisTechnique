@@ -1,10 +1,7 @@
-package me.srikanth.myapplication;
+package me.srikanth.myapplication.helpers;
 
 import android.content.Context;
 import android.os.Vibrator;
-import android.util.Log;
-
-import java.util.Locale;
 
 public class Utils {
 

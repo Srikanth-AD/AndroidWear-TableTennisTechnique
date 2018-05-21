@@ -1,7 +1,9 @@
-package me.srikanth.myapplication;
+package me.srikanth.myapplication.activities;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+
+import me.srikanth.myapplication.R;
 
 public class ForehandDrive extends FragmentActivity {
 

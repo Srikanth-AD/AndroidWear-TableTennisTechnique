@@ -1,4 +1,4 @@
-package me.srikanth.myapplication;
+package me.srikanth.myapplication.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,6 +11,9 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import me.srikanth.myapplication.R;
+import me.srikanth.myapplication.adapters.StableArrayAdapter;
 
 public class MainActivity extends Activity {
 

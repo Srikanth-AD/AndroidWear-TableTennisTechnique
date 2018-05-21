@@ -1,9 +1,12 @@
-package me.srikanth.myapplication;
+package me.srikanth.myapplication.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.widget.TextView;
+
+import me.srikanth.myapplication.R;
+import me.srikanth.myapplication.helpers.Utils;
 
 public class SummaryActivity extends FragmentActivity {
 

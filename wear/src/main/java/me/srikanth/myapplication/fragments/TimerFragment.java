@@ -1,4 +1,4 @@
-package me.srikanth.myapplication;
+package me.srikanth.myapplication.fragments;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import me.srikanth.myapplication.R;
+import me.srikanth.myapplication.models.SharedViewModel;
 
 public class TimerFragment extends Fragment {
 

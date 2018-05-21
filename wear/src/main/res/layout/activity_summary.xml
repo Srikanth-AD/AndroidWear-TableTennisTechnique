@@ -6,7 +6,7 @@
     android:background="@color/black"
     android:padding="@dimen/box_inset_layout_padding"
     android:layout_gravity="center_horizontal"
-    tools:context=".SummaryActivity">
+    tools:context=".activities.SummaryActivity">
 
         <TextView
             android:id="@+id/summaryHeadingText"

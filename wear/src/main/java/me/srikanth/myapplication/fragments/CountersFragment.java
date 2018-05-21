@@ -1,4 +1,4 @@
-package me.srikanth.myapplication;
+package me.srikanth.myapplication.fragments;
 
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
@@ -10,6 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import me.srikanth.myapplication.R;
+import me.srikanth.myapplication.models.SharedViewModel;
 
 public class CountersFragment extends Fragment {
 

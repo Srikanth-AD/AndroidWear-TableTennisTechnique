@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/black"
     android:padding="@dimen/box_inset_layout_padding"
-    tools:context=".MainActivity"
+    tools:context=".activities.MainActivity"
     tools:deviceIds="wear">
 
     <ScrollView
@@ -36,14 +36,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/headingText"
-                android:name="me.srikanth.myapplication.TimerFragment" />
+                android:name="me.srikanth.myapplication.fragments.TimerFragment" />
 
             <fragment
                 android:id="@+id/counters_fragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/timer_fragment"
-                android:name="me.srikanth.myapplication.CountersFragment" />
+                android:name="me.srikanth.myapplication.fragments.CountersFragment" />
         </RelativeLayout>
     </ScrollView>
 </android.support.wear.widget.BoxInsetLayout>

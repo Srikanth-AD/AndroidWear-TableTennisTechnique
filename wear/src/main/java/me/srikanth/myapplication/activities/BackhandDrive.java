@@ -1,4 +1,4 @@
-package me.srikanth.myapplication;
+package me.srikanth.myapplication.activities;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -12,6 +12,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.WindowManager;
+
+import me.srikanth.myapplication.R;
+import me.srikanth.myapplication.activities.SummaryActivity;
+import me.srikanth.myapplication.fragments.TimerFragment;
+import me.srikanth.myapplication.models.SharedViewModel;
+import me.srikanth.myapplication.helpers.Utils;
 
 public class BackhandDrive extends FragmentActivity {
 

@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ForehandDrive">
+    tools:context=".activities.ForehandDrive">
     <fragment
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:id="@+id/timer_fragment"
-        android:name="me.srikanth.myapplication.TimerFragment" />
+        android:name="me.srikanth.myapplication.fragments.TimerFragment" />
 </RelativeLayout>
