@@ -5,7 +5,7 @@
     android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#191919"
+    android:background="@color/black"
     android:padding="@dimen/box_inset_layout_padding"
     tools:context=".MainActivity"
     tools:deviceIds="wear">
@@ -26,25 +26,10 @@
                 android:layout_alignParentTop="true"
                 android:text="@string/backhand_drive"
                 android:textAlignment="center"
+                android:gravity="center_horizontal|center_vertical"
                 android:textAllCaps="false"
                 android:layout_marginBottom="6dp"
                 android:textAppearance="@android:style/TextAppearance.Material.Medium" />
-
-            <Button
-                android:id="@+id/startBackhandPractice"
-                android:layout_width="100dp"
-                android:layout_height="50dp"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="39dp"
-                android:background="#333333"
-                android:gravity="center"
-                android:text="@string/start"
-                android:visibility="invisible"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
 
             <fragment
                 android:id="@+id/timer_fragment"
