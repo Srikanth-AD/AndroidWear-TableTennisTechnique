@@ -21,7 +21,7 @@ public class MainActivity extends Activity {
 
         final ListView listview = findViewById(R.id.listview);
         Resources res = getResources();
-        String[] ttStrokesArr = res.getStringArray(R.array.tabletennis_strokes);
+        String[] ttStrokesArr = res.getStringArray(R.array.tabletennis_exercises);
         List<String> ttStrokesList = new ArrayList<>(Arrays.asList(ttStrokesArr));
 
         final StableArrayAdapter adapter = new StableArrayAdapter(this,

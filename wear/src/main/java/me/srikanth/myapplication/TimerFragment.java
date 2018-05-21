@@ -13,18 +13,18 @@ public class TimerFragment extends Fragment {
     private SharedViewModel model;
 
     // Modes: inactive, started, paused, resumed, stopped
-    public static final String MODE_INACTIVE = "inactive";
-    public static final String MODE_STARTED = "started";
-    public static final String MODE_PAUSED = "paused";
-    public static final String MODE_RESUMED = "resumed";
-    public static final String MODE_STOPPED = "stopped";
+    public static final String TIMER_MODE_INACTIVE = "inactive";
+    public static final String TIMER_MODE_STARTED = "started";
+    public static final String TIMER_MODE_PAUSED = "paused";
+    public static final String TIMER_MODE_RESUMED = "resumed";
+    public static final String TIMER_MODE_STOPPED = "stopped";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_timer, container, false);
         model = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
-        model.getmCurrentMode().setValue(MODE_INACTIVE);
+        model.getCurrentTimerMode().setValue(TIMER_MODE_INACTIVE);
 
         final Button startBtn = view.findViewById(R.id.btn_start);
         final Button pauseBtn = view.findViewById(R.id.btn_pause);
@@ -35,7 +35,7 @@ public class TimerFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 model.getStartTime().setValue(System.currentTimeMillis());
-                model.getmCurrentMode().setValue(MODE_STARTED);
+                model.getCurrentTimerMode().setValue(TIMER_MODE_STARTED);
                 startBtn.setVisibility(View.GONE);
                 pauseBtn.setVisibility(View.VISIBLE);
             }
@@ -44,7 +44,7 @@ public class TimerFragment extends Fragment {
         pauseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                model.getmCurrentMode().setValue(MODE_PAUSED);
+                model.getCurrentTimerMode().setValue(TIMER_MODE_PAUSED);
                 pauseBtn.setVisibility(View.GONE);
                 resumeBtn.setVisibility(View.VISIBLE);
                 stopBtn.setVisibility(View.VISIBLE);
@@ -54,7 +54,7 @@ public class TimerFragment extends Fragment {
         resumeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                model.getmCurrentMode().setValue(MODE_RESUMED);
+                model.getCurrentTimerMode().setValue(TIMER_MODE_RESUMED);
                 resumeBtn.setVisibility(View.GONE);
                 stopBtn.setVisibility(View.GONE);
                 pauseBtn.setVisibility(View.VISIBLE);
@@ -65,7 +65,7 @@ public class TimerFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 model.getStopTime().setValue(System.currentTimeMillis());
-                model.getmCurrentMode().setValue(MODE_STOPPED);
+                model.getCurrentTimerMode().setValue(TIMER_MODE_STOPPED);
                 resumeBtn.setVisibility(View.GONE);
                 stopBtn.setVisibility(View.GONE);
                 startBtn.setVisibility(View.VISIBLE);

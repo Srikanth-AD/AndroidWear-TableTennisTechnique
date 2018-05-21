@@ -12,8 +12,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.TextView;
 
 public class BackhandDrive extends FragmentActivity {
 
@@ -21,9 +19,6 @@ public class BackhandDrive extends FragmentActivity {
     private Sensor mLinearAcceleration;
     private Sensor mGravitySensor;
     public SensorEventListener _SensorEventListener;
-    TextView forwardCountTextView;
-    TextView rescueCountTextView;
-    Button startBackhandPracticeButton;
     int forwardCount, rescueCount = 0;
     int accelerationPeakValue = 0;
     float gravityPeak = 0.0f;
@@ -31,7 +26,7 @@ public class BackhandDrive extends FragmentActivity {
     private SharedViewModel mModel;
 
     private static final float GRAVITY_THRESHOLD = 5.4f; // to differentiate forward versus upward movement
-    private static final int MIN_LINEAR_ACCELERATION_AT_PEAK = 10; // minimum acceptable peak acceleration during a rep
+    private static final int MIN_LINEAR_ACCELERATION_AT_PEAK = 11; // minimum acceptable peak acceleration during a rep
     private  static final int MAX_LINEAR_ACCELERATION_AT_REST = 3;  // due to normal hand movement, acceleration may never be zero
     private static final long TIME_THRESHOLD_NS = 1800000000; // in nanoseconds (= 2sec)
 
@@ -40,9 +35,7 @@ public class BackhandDrive extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_backhand_drive);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // @todo add ambient mode support
-        forwardCountTextView = findViewById(R.id.forwardCountTextView);
-        rescueCountTextView = findViewById(R.id.rescueCountTextView);
-        startBackhandPracticeButton = findViewById(R.id.startBackhandPractice);
+        mModel = ViewModelProviders.of(this).get(SharedViewModel.class);
 
         resetCountsPerSession();
 
@@ -50,7 +43,6 @@ public class BackhandDrive extends FragmentActivity {
         mLinearAcceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         mGravitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
 
-        mModel = ViewModelProviders.of(this).get(SharedViewModel.class);
         final Observer<String> timerObserver = new Observer<String>() {
             @Override
             public void onChanged(@Nullable final String newModeName) {
@@ -60,14 +52,15 @@ public class BackhandDrive extends FragmentActivity {
 
                 // Started
                 if (newModeName != null &&
-                        newModeName.equals(TimerFragment.MODE_STARTED)) {
+                        newModeName.equals(TimerFragment.TIMER_MODE_STARTED)) {
                     resetCountsPerSession();
+                    mModel.getCurrentExercise().setValue(SharedViewModel.EXERCISE_BACKHAND_DRIVE);
                 }
 
                 // Started or Resumed
                 if (newModeName != null &&
-                        (newModeName.equals(TimerFragment.MODE_STARTED) ||
-                        newModeName.equals(TimerFragment.MODE_RESUMED))
+                        (newModeName.equals(TimerFragment.TIMER_MODE_STARTED) ||
+                        newModeName.equals(TimerFragment.TIMER_MODE_RESUMED))
                         ) {
 
                     if (mGravitySensor != null) {
@@ -85,24 +78,30 @@ public class BackhandDrive extends FragmentActivity {
 
                 // Paused or Stopped
                 if (newModeName != null &&
-                        (newModeName.equals(TimerFragment.MODE_PAUSED) ||
-                                newModeName.equals(TimerFragment.MODE_STOPPED))
+                        (newModeName.equals(TimerFragment.TIMER_MODE_PAUSED) ||
+                                newModeName.equals(TimerFragment.TIMER_MODE_STOPPED))
                         ) {
 
                     mSensorManager.unregisterListener(_SensorEventListener);
                 }
 
                 // On Stop, display summary
-                if (newModeName != null && newModeName.equals(TimerFragment.MODE_STOPPED)) {
+                if (newModeName != null && newModeName.equals(TimerFragment.TIMER_MODE_STOPPED)) {
+
                     Intent i = new Intent(getApplicationContext(), SummaryActivity.class);
+                    i.putExtra("exerciseName", mModel.getCurrentExercise().getValue());
                     i.putExtra("startTime", mModel.getStartTime().getValue());
                     i.putExtra("stopTime", mModel.getStopTime().getValue());
+                    i.putExtra("forwardCount", mModel.getForwardCount().getValue());
+                    i.putExtra("rescueCount", mModel.getRescueCount().getValue());
+
+                    mModel.getCurrentExercise().setValue(""); // reset
                     startActivity(i);
                 }
             }
         };
 
-        mModel.getmCurrentMode().observe(this, timerObserver);
+        mModel.getCurrentTimerMode().observe(this, timerObserver);
         getSensorData();
     }
 
@@ -159,13 +158,13 @@ public class BackhandDrive extends FragmentActivity {
 
     private void incrementForwardCount() {
         forwardCount++;
-        forwardCountTextView.setText(String.valueOf(forwardCount));
+        mModel.getForwardCount().setValue(forwardCount);
     }
 
     private void incrementRescueCount() {
         Utils.triggerVibration(this);
         rescueCount++;
-        rescueCountTextView.setText(String.valueOf(rescueCount));
+        mModel.getRescueCount().setValue(rescueCount);
     }
 
     private void resetPeakValuesPerRep() {
@@ -176,8 +175,8 @@ public class BackhandDrive extends FragmentActivity {
     private void resetCountsPerSession() {
         forwardCount = 0;
         rescueCount = 0;
-        forwardCountTextView.setText(String.valueOf(forwardCount));
-        rescueCountTextView.setText(String.valueOf(rescueCount));
+        mModel.getForwardCount().setValue(forwardCount);
+        mModel.getRescueCount().setValue(rescueCount);
     }
 
     @Override

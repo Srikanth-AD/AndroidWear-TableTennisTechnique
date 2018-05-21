@@ -47,78 +47,18 @@
                 android:textSize="16sp" />
 
             <fragment
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
                 android:id="@+id/timer_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/headingText"
                 android:name="me.srikanth.myapplication.TimerFragment" />
 
-
-            <LinearLayout
+            <fragment
+                android:id="@+id/counters_fragment"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/timer_fragment"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:weightSum="1.0">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="12dp"
-                    android:orientation="vertical"
-                    android:weightSum="0.5">
-
-                    <TextView
-                        android:id="@+id/forwardCountTextView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:textColor="@android:color/holo_green_dark"
-                        android:textSize="18sp"
-                        android:weightSum="0.5" />
-
-                    <TextView
-                        android:id="@+id/textView3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/forward"
-                        android:textAllCaps="true"
-                        android:textColor="@android:color/white"
-                        android:textSize="12sp"
-                        android:weightSum="0.5" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:weightSum="0.5">
-
-                    <TextView
-                        android:id="@+id/rescueCountTextView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:textColor="@color/dismiss_close_pressed"
-                        android:textSize="18sp"
-                        android:weightSum="0.5" />
-
-                    <TextView
-                        android:id="@+id/textView4"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/rescue"
-                        android:textAllCaps="true"
-                        android:textColor="@color/white"
-                        android:textSize="12sp"
-                        android:textStyle="normal"
-                        android:weightSum="0.5" />
-
-                </LinearLayout>
-            </LinearLayout>
+                android:name="me.srikanth.myapplication.CountersFragment" />
         </RelativeLayout>
     </ScrollView>
 </android.support.wear.widget.BoxInsetLayout>

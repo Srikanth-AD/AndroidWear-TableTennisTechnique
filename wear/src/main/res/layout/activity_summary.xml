@@ -5,18 +5,104 @@
     android:layout_height="match_parent"
     android:background="#191919"
     android:padding="@dimen/box_inset_layout_padding"
+    android:layout_gravity="center_horizontal"
     tools:context=".SummaryActivity">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:text="@string/active_time"
-            android:id="@+id/activeTimeLabel"
-            android:gravity="center_horizontal"
-            android:layout_height="20dp" />
+            android:id="@+id/summaryHeadingText"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="@string/summary"
+            android:textAppearance="@android:style/TextAppearance.Material.Medium"
+            android:layout_marginBottom="10dp" />
+
         <TextView
-            android:id="@+id/activeTime"
-            android:layout_width="wrap_content"
-            android:layout_below="@id/activeTimeLabel"
+            android:id="@+id/exerciseName"
             android:gravity="center_horizontal"
-            android:layout_height="30dp" />
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="8dp"
+            android:layout_below="@id/summaryHeadingText"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/exerciseName"
+            android:layout_marginTop="10dp"
+            android:gravity="top|center"
+            android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                        <TextView
+                            android:id="@+id/activeTimeLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/active_time"
+                            android:layout_marginEnd="10dp"
+                            android:gravity="start"
+                            android:weightSum="0.5" />
+
+                        <TextView
+                            android:id="@+id/activeTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@android:color/white"
+                            android:gravity="end"
+                            android:weightSum="0.5" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                        <TextView
+                            android:id="@+id/forwardCountLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:text="@string/forward"
+                            android:textAlignment="center"
+                            android:weightSum="0.5" />
+
+                        <TextView
+                            android:id="@+id/forwardCountTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@android:color/white"
+                            android:textAlignment="center"
+                            android:weightSum="0.5" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                        <TextView
+                            android:id="@+id/rescueCountLabel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/rescue"
+                            android:layout_marginEnd="10dp"
+                            android:weightSum="0.5" />
+
+                        <TextView
+                            android:id="@+id/rescueCountTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@android:color/white"
+                            android:textAlignment="center"
+                            android:weightSum="0.5" />
+                </LinearLayout>
+        </LinearLayout>
 </RelativeLayout>
