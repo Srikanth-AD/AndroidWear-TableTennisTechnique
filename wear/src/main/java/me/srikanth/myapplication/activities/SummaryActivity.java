@@ -32,4 +32,5 @@ public class SummaryActivity extends FragmentActivity {
         forwardCountTextView.setText(String.valueOf(forwardCount));
         rescueCountTextView.setText(String.valueOf(rescueCount));
     }
+
 }

@@ -51,22 +51,22 @@ public class BackhandDrive extends FragmentActivity {
 
         final Observer<String> timerObserver = new Observer<String>() {
             @Override
-            public void onChanged(@Nullable final String newModeName) {
+            public void onChanged(@Nullable final String newTimerModeName) {
 
-                Log.d("Timer mode", newModeName);
+                Log.d("Timer mode", newTimerModeName);
                 resetPeakValuesPerRep();
 
                 // Started
-                if (newModeName != null &&
-                        newModeName.equals(TimerFragment.TIMER_MODE_STARTED)) {
+                if (newTimerModeName != null &&
+                        newTimerModeName.equals(TimerFragment.TIMER_MODE_STARTED)) {
                     resetCountsPerSession();
                     mModel.getCurrentExercise().setValue(SharedViewModel.EXERCISE_BACKHAND_DRIVE);
                 }
 
                 // Started or Resumed
-                if (newModeName != null &&
-                        (newModeName.equals(TimerFragment.TIMER_MODE_STARTED) ||
-                        newModeName.equals(TimerFragment.TIMER_MODE_RESUMED))
+                if (newTimerModeName != null &&
+                        (newTimerModeName.equals(TimerFragment.TIMER_MODE_STARTED) ||
+                        newTimerModeName.equals(TimerFragment.TIMER_MODE_RESUMED))
                         ) {
 
                     if (mGravitySensor != null) {
@@ -83,16 +83,16 @@ public class BackhandDrive extends FragmentActivity {
                 }
 
                 // Paused or Stopped
-                if (newModeName != null &&
-                        (newModeName.equals(TimerFragment.TIMER_MODE_PAUSED) ||
-                                newModeName.equals(TimerFragment.TIMER_MODE_STOPPED))
+                if (newTimerModeName != null &&
+                        (newTimerModeName.equals(TimerFragment.TIMER_MODE_PAUSED) ||
+                                newTimerModeName.equals(TimerFragment.TIMER_MODE_STOPPED))
                         ) {
 
                     mSensorManager.unregisterListener(_SensorEventListener);
                 }
 
                 // On Stop, display summary
-                if (newModeName != null && newModeName.equals(TimerFragment.TIMER_MODE_STOPPED)) {
+                if (newTimerModeName != null && newTimerModeName.equals(TimerFragment.TIMER_MODE_STOPPED)) {
 
                     Intent i = new Intent(getApplicationContext(), SummaryActivity.class);
                     i.putExtra("exerciseName", mModel.getCurrentExercise().getValue());
