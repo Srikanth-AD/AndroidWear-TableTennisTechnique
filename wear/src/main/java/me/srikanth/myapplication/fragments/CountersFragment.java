@@ -30,13 +30,6 @@ public class CountersFragment extends Fragment {
         rescueCountTextView = view.findViewById(R.id.rescueCountTextView);
         mModel = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
 
-        final Observer<String> exerciseNameObserver = new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable final String newExerciseName) {
-                Log.d("exerciseNameObserver", newExerciseName + "");
-            }
-        };
-
         final Observer<Integer> forwardCountObserver = new Observer<Integer>() {
             @Override
             public void onChanged(@Nullable final Integer newForwardCount) {
@@ -53,7 +46,6 @@ public class CountersFragment extends Fragment {
             }
         };
 
-        mModel.getCurrentExercise().observe(this, exerciseNameObserver);
         mModel.getForwardCount().observe(this, forwardCountObserver);
         mModel.getRescueCount().observe(this, rescueCountObserver);
 
