@@ -3,6 +3,9 @@ package me.srikanth.myapplication.models;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SharedViewModel extends ViewModel {
 
     // List of exercises
@@ -19,7 +22,6 @@ public class SharedViewModel extends ViewModel {
     private MutableLiveData<Long> stopTime;
     private MutableLiveData<Integer> forwardCount;
     private MutableLiveData<Integer> rescueCount;
-    private MutableLiveData<Integer[]> peakAccelerations;
 
     public MutableLiveData<String> getCurrentExercise() {
         if (currentExercise == null) {
@@ -63,12 +65,5 @@ public class SharedViewModel extends ViewModel {
             forwardCount.setValue(0);
         }
         return rescueCount;
-    }
-
-    public MutableLiveData<Integer[]> getPeakAccelerations() {
-        if (peakAccelerations == null) {
-            peakAccelerations = new MutableLiveData<>();
-        }
-        return peakAccelerations;
     }
 }

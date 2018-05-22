@@ -18,6 +18,9 @@
     <string name="loop_count">Loop Count</string>
     <string name="loop_drive">Loop/Drive</string>
     <string name="loop_drive_count">Loop/Drive Count</string>
+    <string name="avg_peak_acceleration">Avg. Peak Acceleration</string>
+    <string name="ms2">m/s2</string>
+    <string name="mph">mph</string>
     <string name="summary">Summary</string>
     <string name="forward">Forward</string>
     <string name="forward_count">Forward count</string>

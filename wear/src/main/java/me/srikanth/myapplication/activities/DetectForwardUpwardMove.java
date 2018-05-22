@@ -14,6 +14,10 @@ import android.util.Log;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import java.text.Format;
+import java.util.ArrayList;
+import java.util.List;
+
 import me.srikanth.myapplication.R;
 import me.srikanth.myapplication.fragments.TimerFragment;
 import me.srikanth.myapplication.models.SharedViewModel;
@@ -35,6 +39,7 @@ public class DetectForwardUpwardMove extends FragmentActivity {
     private static final int MIN_LINEAR_ACCELERATION_AT_PEAK = 11; // minimum acceptable peak acceleration during a rep
     private  static final int MAX_LINEAR_ACCELERATION_AT_REST = 3;  // due to normal hand movement, acceleration may never be zero
     private static final long TIME_THRESHOLD_NS = 1800000000; // in nanoseconds (= 2sec)
+    List<Integer> peakAccelerations = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +111,7 @@ public class DetectForwardUpwardMove extends FragmentActivity {
                     i.putExtra("stopTime", mModel.getStopTime().getValue());
                     i.putExtra("forwardCount", mModel.getForwardCount().getValue());
                     i.putExtra("rescueCount", mModel.getRescueCount().getValue());
+                    i.putExtra("avgPeakAcceleration", (int) avgPeakAcceleration(peakAccelerations));
 
                     startActivity(i);
                 }
@@ -152,6 +158,7 @@ public class DetectForwardUpwardMove extends FragmentActivity {
                                 incrementRescueCount();
                             }
 
+                            peakAccelerations.add(accelerationPeakValue);
                             resetPeakValuesPerRep();
                         }
                         break;
@@ -167,13 +174,29 @@ public class DetectForwardUpwardMove extends FragmentActivity {
         };
     }
 
+    private float avgPeakAcceleration(List<Integer> accelerationsList) {
+        if (accelerationsList.size() < 1) {
+            return 0;
+        }
+        int sum = 0;
+        for (Integer item : accelerationsList) {
+            sum += item;
+        }
+        return sum / accelerationsList.size();
+    }
+
     private void incrementForwardCount() {
         forwardCount++;
         mModel.getForwardCount().setValue(forwardCount);
     }
 
     private void incrementRescueCount() {
-        Utils.triggerVibration(this);
+
+        // trigger vibration only for rescues in backhand drive
+        if (mModel.getCurrentExercise().getValue() != null &&
+                mModel.getCurrentExercise().getValue().equals(SharedViewModel.EXERCISE_BACKHAND_DRIVE)) {
+            Utils.triggerVibration(this);
+        }
         rescueCount++;
         mModel.getRescueCount().setValue(rescueCount);
     }

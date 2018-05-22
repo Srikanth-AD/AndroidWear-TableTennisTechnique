@@ -3,6 +3,7 @@ package me.srikanth.myapplication.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.widget.TextView;
 
 import me.srikanth.myapplication.R;
@@ -22,6 +23,7 @@ public class SummaryActivity extends FragmentActivity {
         TextView stat2LabelTextView = findViewById(R.id.stat2Label);
         TextView stat1TextView = findViewById(R.id.stat1);
         TextView stat2TextView = findViewById(R.id.stat2);
+        TextView avgPeakAccelerationTextView = findViewById(R.id.avgPeakAcceleration);
 
         Intent intent = getIntent();
         final String exerciseName = intent.getExtras().getString("exerciseName");
@@ -29,9 +31,11 @@ public class SummaryActivity extends FragmentActivity {
         final long stopTime = intent.getExtras().getLong("stopTime");
         final int forwardCount = intent.getExtras().getInt("forwardCount");
         final int rescueCount = intent.getExtras().getInt("rescueCount");
+        final int avgPeakAcceleration = intent.getExtras().getInt("avgPeakAcceleration");
 
         exerciseNameTextView.setText(exerciseName);
         activeTimeTextView.setText(Utils.timeConversion(startTime, stopTime));
+        avgPeakAccelerationTextView.setText(String.valueOf(avgPeakAcceleration));
 
         switch (exerciseName) {
 
