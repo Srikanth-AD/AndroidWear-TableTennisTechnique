@@ -33,8 +33,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.BackhandDrive" />
-        <activity android:name=".activities.ForehandDrive" />
+        <activity android:name=".activities.DetectForwardUpwardMove" />
         <activity android:name=".activities.SummaryActivity"></activity>
     </application>
 

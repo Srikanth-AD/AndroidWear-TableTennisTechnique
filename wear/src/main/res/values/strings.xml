@@ -11,11 +11,22 @@
     <string name="active_time">Active Time</string>
     <string name="resume">Resume</string>
     <string name="stop">Stop</string>
+    <string name="drive">Drive</string>
+    <string name="drive_count">Drive count</string>
+    <string name="count">Count</string>
+    <string name="loop">Loop</string>
+    <string name="loop_count">Loop Count</string>
+    <string name="loop_drive">Loop/Drive</string>
+    <string name="loop_drive_count">Loop/Drive Count</string>
     <string name="summary">Summary</string>
     <string name="forward">Forward</string>
+    <string name="forward_count">Forward count</string>
     <string name="rescue">Rescue</string>
+    <string name="rescue_count">Rescue Count</string>
     <string-array name="tabletennis_exercises">
         <item>Backhand Drive</item>
         <item>Forehand Drive</item>
+        <item>Backhand Loop</item>
+        <item>Forehand Loop</item>
     </string-array>
 </resources>

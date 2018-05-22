@@ -12,14 +12,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import me.srikanth.myapplication.R;
-import me.srikanth.myapplication.activities.SummaryActivity;
 import me.srikanth.myapplication.fragments.TimerFragment;
 import me.srikanth.myapplication.models.SharedViewModel;
 import me.srikanth.myapplication.helpers.Utils;
 
-public class BackhandDrive extends FragmentActivity {
+public class DetectForwardUpwardMove extends FragmentActivity {
 
     private SensorManager mSensorManager;
     private Sensor mLinearAcceleration;
@@ -30,7 +30,7 @@ public class BackhandDrive extends FragmentActivity {
     float gravityPeak = 0.0f;
     private long accelerationPeakTimestamp = 0;
     private SharedViewModel mModel;
-
+    TextView headingText;
     private static final float GRAVITY_THRESHOLD = 5.4f; // to differentiate forward versus upward movement
     private static final int MIN_LINEAR_ACCELERATION_AT_PEAK = 11; // minimum acceptable peak acceleration during a rep
     private  static final int MAX_LINEAR_ACCELERATION_AT_REST = 3;  // due to normal hand movement, acceleration may never be zero
@@ -39,9 +39,16 @@ public class BackhandDrive extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_backhand_drive);
+        setContentView(R.layout.activity_detect_forward_upward_move);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // @todo add ambient mode support
         mModel = ViewModelProviders.of(this).get(SharedViewModel.class);
+
+        Intent intent = getIntent();
+        mModel.getCurrentExercise().setValue(intent.getExtras().getString("exerciseName"));
+
+
+        headingText = findViewById(R.id.headingText);
+        headingText.setText(mModel.getCurrentExercise().getValue());
 
         resetCountsPerSession();
 
@@ -60,7 +67,6 @@ public class BackhandDrive extends FragmentActivity {
                 if (newTimerModeName != null &&
                         newTimerModeName.equals(TimerFragment.TIMER_MODE_STARTED)) {
                     resetCountsPerSession();
-                    mModel.getCurrentExercise().setValue(SharedViewModel.EXERCISE_BACKHAND_DRIVE);
                 }
 
                 // Started or Resumed
@@ -101,7 +107,6 @@ public class BackhandDrive extends FragmentActivity {
                     i.putExtra("forwardCount", mModel.getForwardCount().getValue());
                     i.putExtra("rescueCount", mModel.getRescueCount().getValue());
 
-                    mModel.getCurrentExercise().setValue(""); // reset
                     startActivity(i);
                 }
             }
@@ -119,7 +124,7 @@ public class BackhandDrive extends FragmentActivity {
 
                 switch (event.sensor.getType()) {
 
-                    case  Sensor.TYPE_GRAVITY:
+                    case Sensor.TYPE_GRAVITY:
                         if (Math.abs(event.values[0]) > gravityPeak) {
                             gravityPeak = Math.abs(event.values[0]);
                         }

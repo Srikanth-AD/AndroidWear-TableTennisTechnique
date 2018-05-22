@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import me.srikanth.myapplication.R;
 import me.srikanth.myapplication.helpers.Utils;
+import me.srikanth.myapplication.models.SharedViewModel;
 
 public class SummaryActivity extends FragmentActivity {
 
@@ -17,8 +18,10 @@ public class SummaryActivity extends FragmentActivity {
 
         TextView exerciseNameTextView = findViewById(R.id.exerciseName);
         TextView activeTimeTextView = findViewById(R.id.activeTime);
-        TextView forwardCountTextView = findViewById(R.id.forwardCountTextView);
-        TextView rescueCountTextView = findViewById(R.id.rescueCountTextView);
+        TextView stat1LabelTextView = findViewById(R.id.stat1Label);
+        TextView stat2LabelTextView = findViewById(R.id.stat2Label);
+        TextView stat1TextView = findViewById(R.id.stat1);
+        TextView stat2TextView = findViewById(R.id.stat2);
 
         Intent intent = getIntent();
         final String exerciseName = intent.getExtras().getString("exerciseName");
@@ -29,8 +32,37 @@ public class SummaryActivity extends FragmentActivity {
 
         exerciseNameTextView.setText(exerciseName);
         activeTimeTextView.setText(Utils.timeConversion(startTime, stopTime));
-        forwardCountTextView.setText(String.valueOf(forwardCount));
-        rescueCountTextView.setText(String.valueOf(rescueCount));
+
+        switch (exerciseName) {
+
+            case SharedViewModel.EXERCISE_BACKHAND_LOOP:
+            case SharedViewModel.EXERCISE_FOREHAND_LOOP:
+
+                stat1LabelTextView.setText(R.string.loop_count);
+                stat2LabelTextView.setText(R.string.loop_drive_count);
+                stat1TextView.setText(String.valueOf(rescueCount));
+                stat2TextView.setText(String.valueOf(forwardCount));
+                break;
+
+            case SharedViewModel.EXERCISE_FOREHAND_DRIVE:
+
+                stat1LabelTextView.setText(R.string.drive_count);
+                stat2LabelTextView.setText(R.string.loop_drive_count);
+                stat1TextView.setText(String.valueOf(forwardCount));
+                stat2TextView.setText(String.valueOf(rescueCount));
+                break;
+
+            case SharedViewModel.EXERCISE_BACKHAND_DRIVE:
+
+                stat1LabelTextView.setText(R.string.drive_count);
+                stat2LabelTextView.setText(R.string.rescue_count);
+                stat1TextView.setText(String.valueOf(forwardCount));
+                stat2TextView.setText(String.valueOf(rescueCount));
+                break;
+
+            default:
+                break;
+        }
     }
 
 }

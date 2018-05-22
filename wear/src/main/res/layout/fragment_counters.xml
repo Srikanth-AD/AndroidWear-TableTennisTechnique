@@ -23,7 +23,7 @@
             android:weightSum="0.5">
 
             <TextView
-                android:id="@+id/forwardCountTextView"
+                android:id="@+id/stat1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
@@ -32,10 +32,9 @@
                 android:weightSum="0.5" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/stat1Label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/forward"
                 android:textAllCaps="true"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
@@ -50,7 +49,7 @@
             android:weightSum="0.5">
 
             <TextView
-                android:id="@+id/rescueCountTextView"
+                android:id="@+id/stat2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
@@ -59,10 +58,9 @@
                 android:weightSum="0.5" />
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/stat2Label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/rescue"
                 android:textAllCaps="true"
                 android:textColor="@color/white"
                 android:textSize="12sp"
