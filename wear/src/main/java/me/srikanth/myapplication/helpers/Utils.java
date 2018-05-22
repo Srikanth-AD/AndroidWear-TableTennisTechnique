@@ -2,6 +2,9 @@ package me.srikanth.myapplication.helpers;
 
 import android.content.Context;
 import android.os.Vibrator;
+import android.util.Log;
+
+import java.util.List;
 
 public class Utils {
 
@@ -28,5 +31,24 @@ public class Utils {
         return hours + ":" + minutes + ":" + seconds;
     }
 
+    public static float average(List<Integer> itemList) {
+        if (itemList.size() < 1) {
+            return 0;
+        }
+        int sum = 0;
+        for (Integer item : itemList) {
+            sum += item;
+        }
+        return sum / itemList.size();
+    }
+
+    // Convert ms2 to mph
+    public static int convertms2tomph(int ms2) {
+        if (ms2 < 1) {
+            return 0;
+        }
+        Log.d("convertMs2tomph", (int) (ms2 * 2.2369362912) + "");
+        return (int) (ms2 * 2.2369362912);
+    }
 
 }

@@ -35,7 +35,15 @@ public class SummaryActivity extends FragmentActivity {
 
         exerciseNameTextView.setText(exerciseName);
         activeTimeTextView.setText(Utils.timeConversion(startTime, stopTime));
-        avgPeakAccelerationTextView.setText(String.valueOf(avgPeakAcceleration));
+
+        avgPeakAccelerationTextView.setText(String.valueOf(Utils.convertms2tomph(avgPeakAcceleration)));
+        avgPeakAccelerationTextView.append(" "); // @todo clean up using string templates
+        avgPeakAccelerationTextView.append(getText(R.string.mph));
+
+        if (exerciseName == null ) {
+            Log.d("Exercise name", "is null");
+            return;
+        }
 
         switch (exerciseName) {
 

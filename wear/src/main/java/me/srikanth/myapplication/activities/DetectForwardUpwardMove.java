@@ -111,7 +111,7 @@ public class DetectForwardUpwardMove extends FragmentActivity {
                     i.putExtra("stopTime", mModel.getStopTime().getValue());
                     i.putExtra("forwardCount", mModel.getForwardCount().getValue());
                     i.putExtra("rescueCount", mModel.getRescueCount().getValue());
-                    i.putExtra("avgPeakAcceleration", (int) avgPeakAcceleration(peakAccelerations));
+                    i.putExtra("avgPeakAcceleration", (int) Utils.average(peakAccelerations));
 
                     startActivity(i);
                 }
@@ -172,17 +172,6 @@ public class DetectForwardUpwardMove extends FragmentActivity {
             public void onAccuracyChanged(Sensor sensor, int accuracy) {
             }
         };
-    }
-
-    private float avgPeakAcceleration(List<Integer> accelerationsList) {
-        if (accelerationsList.size() < 1) {
-            return 0;
-        }
-        int sum = 0;
-        for (Integer item : accelerationsList) {
-            sum += item;
-        }
-        return sum / accelerationsList.size();
     }
 
     private void incrementForwardCount() {
