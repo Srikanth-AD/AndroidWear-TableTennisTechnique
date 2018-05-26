@@ -26,6 +26,8 @@
     <string name="forward_count">Forward count</string>
     <string name="rescue">Rescue</string>
     <string name="rescue_count">Rescue Count</string>
+    <string name="select_exercise">Select an Exercise</string>
+    <string name="h_m_s">h:m:s</string>
     <string-array name="tabletennis_exercises">
         <item>Backhand Drive</item>
         <item>Forehand Drive</item>

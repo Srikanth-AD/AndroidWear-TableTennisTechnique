@@ -3,6 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black">
+    <TextView
+        android:id="@+id/headingText"
+        android:layout_width="match_parent"
+        android:textSize="@dimen/heading_text_font_size"
+        android:layout_height="30dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:textAlignment="center"
+        android:gravity="center_horizontal|center_vertical"
+        android:textAllCaps="false"
+        android:text="@string/select_exercise"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/heading_text"
+        android:background="@color/heading_bg" />
+
     <ListView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/listview"
         android:layout_width="wrap_content"

@@ -4,131 +4,130 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     tools:context=".activities.SummaryActivity">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/black"
             android:padding="@dimen/box_inset_layout_padding"
             android:layout_gravity="center_horizontal">
                 <TextView
                     android:id="@+id/summaryHeadingText"
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
+                    android:layout_height="wrap_content"
                     android:gravity="center_horizontal|center_vertical"
+                    android:textSize="@dimen/heading_text_font_size"
                     android:text="@string/summary"
-                    android:textAppearance="@android:style/TextAppearance.Material.Medium"
-                    android:layout_marginBottom="10dp" />
+                    android:textColor="@color/heading_text"
+                    android:background="@color/heading_bg"
+                    android:layout_marginBottom="8dp" />
 
                 <TextView
                     android:id="@+id/exerciseName"
                     android:gravity="center_horizontal"
                     android:layout_width="match_parent"
                     android:layout_marginTop="5dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_below="@id/summaryHeadingText"
                     android:layout_height="wrap_content" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_below="@id/exerciseName"
-                    android:layout_marginTop="10dp"
-                    android:gravity="top|center"
+                    android:gravity="center_horizontal"
                     android:orientation="vertical">
-
                         <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:orientation="horizontal"
-                            android:weightSum="1">
-
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:orientation="vertical">
                                 <TextView
                                     android:id="@+id/activeTimeLabel"
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:textSize="@dimen/text_label_font_size"
                                     android:text="@string/active_time"
-                                    android:layout_marginEnd="10dp"
-                                    android:gravity="start"
-                                    android:weightSum="0.5" />
-
+                                    android:textColor="@color/text_label"
+                                    android:gravity="center_horizontal" />
                                 <TextView
                                     android:id="@+id/activeTime"
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:textColor="@android:color/white"
-                                    android:gravity="end"
-                                    android:weightSum="0.5" />
+                                    android:textAlignment="center"
+                                    android:textColor="@color/text"
+                                    android:textSize="@dimen/text_font_size"
+                                    android:gravity="center_horizontal" />
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/text_label_font_size"
+                                    android:text="@string/h_m_s"
+                                    android:textColor="@color/text_label"
+                                    android:gravity="center_horizontal" />
                         </LinearLayout>
-
                         <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:orientation="horizontal"
-                            android:weightSum="1">
-
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:orientation="vertical">
                                 <TextView
                                     android:id="@+id/stat1Label"
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginEnd="10dp"
                                     android:text="@string/forward"
-                                    android:textAlignment="center"
-                                    android:weightSum="0.5" />
-
+                                    android:textSize="@dimen/text_label_font_size"
+                                    android:textColor="@color/text_label"
+                                    android:textAlignment="center" />
                                 <TextView
                                     android:id="@+id/stat1"
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:textColor="@android:color/white"
-                                    android:textAlignment="center"
-                                    android:weightSum="0.5" />
+                                    android:textSize="@dimen/text_font_size"
+                                    android:textColor="@color/text"
+                                    android:textAlignment="center" />
                         </LinearLayout>
-
                         <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:orientation="horizontal"
-                            android:weightSum="1">
-
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:orientation="vertical">
                                 <TextView
                                     android:id="@+id/stat2Label"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="@string/rescue"
-                                    android:layout_marginEnd="10dp"
-                                    android:weightSum="0.5" />
-
+                                    android:textSize="@dimen/text_label_font_size"
+                                    android:textColor="@color/text_label"
+                                    android:textAlignment="center"
+                                    android:text="@string/rescue" />
                                 <TextView
                                     android:id="@+id/stat2"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:textColor="@android:color/white"
-                                    android:textAlignment="center"
-                                    android:weightSum="0.5" />
+                                    android:textSize="@dimen/text_font_size"
+                                    android:textColor="@color/text"
+                                    android:textAlignment="center" />
                         </LinearLayout>
-
                         <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:orientation="horizontal"
-                            android:weightSum="1">
-
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:orientation="vertical">
                                 <TextView
                                     android:id="@+id/avgPeakAccelerationLabel"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="@string/avg_peak_acceleration"
-                                    android:layout_marginEnd="10dp"
-                                    android:weightSum="0.5" />
-
+                                    android:textSize="@dimen/text_label_font_size"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/text_label"
+                                    android:text="@string/avg_peak_acceleration" />
                                 <TextView
                                     android:id="@+id/avgPeakAcceleration"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:textColor="@android:color/white"
-                                    android:textAlignment="center"
-                                    android:weightSum="0.5" />
+                                    android:textSize="@dimen/text_font_size"
+                                    android:textColor="@color/text"
+                                    android:textAlignment="center" />
                         </LinearLayout>
                 </LinearLayout>
         </RelativeLayout>
