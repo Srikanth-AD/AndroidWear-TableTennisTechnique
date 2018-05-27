@@ -34,9 +34,7 @@ public class DetectForwardUpwardMove extends FragmentActivity {
     private long accelerationPeakTimestamp = 0;
     private SharedViewModel mModel;
     TextView headingText;
-    private static final float BACKHAND_GRAVITY_THRESHOLD = 5.5f; // to differentiate forward versus upward movement
-    private static final float FOREHAND_GRAVITY_THRESHOLD = 7.0f; // to differentiate forward versus upward movement
-    private float gravityThreshold;
+    private static final float GRAVITY_THRESHOLD = 5.5f; // to differentiate forward versus upward movement
     private static final int MIN_LINEAR_ACCELERATION_AT_PEAK = 11; // minimum acceptable peak acceleration during a rep
     private  static final int MAX_LINEAR_ACCELERATION_AT_REST = 3;  // due to normal hand movement, acceleration may never be zero
     private static final long TIME_THRESHOLD_NS = 1800000000; // in nanoseconds (= 2sec)
@@ -51,15 +49,6 @@ public class DetectForwardUpwardMove extends FragmentActivity {
 
         Intent intent = getIntent();
         mModel.getCurrentExercise().setValue(intent.getExtras().getString("exerciseName"));
-
-        // set gravity threshold
-        if (mModel.getCurrentExercise().getValue() != null &&
-                mModel.getCurrentExercise().getValue().contains ("BACK")) {
-            gravityThreshold = BACKHAND_GRAVITY_THRESHOLD;
-        } else {
-            gravityThreshold = FOREHAND_GRAVITY_THRESHOLD;
-        }
-
 
         headingText = findViewById(R.id.headingText);
         headingText.setText(mModel.getCurrentExercise().getValue());
@@ -161,7 +150,7 @@ public class DetectForwardUpwardMove extends FragmentActivity {
                                 Math.abs(event.values[0]) <= MAX_LINEAR_ACCELERATION_AT_REST &&
                                 accelerationPeakValue > MIN_LINEAR_ACCELERATION_AT_PEAK) {
 
-                            if (gravityPeak <= gravityThreshold) {
+                            if (gravityPeak <= GRAVITY_THRESHOLD) {
                                 incrementForwardCount();
                             } else {
                                 incrementRescueCount();
