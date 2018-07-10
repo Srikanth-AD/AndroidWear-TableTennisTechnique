@@ -57,17 +57,10 @@ public class SummaryActivity extends FragmentActivity {
                 break;
 
             case SharedViewModel.EXERCISE_FOREHAND_DRIVE:
-
-                stat1LabelTextView.setText(R.string.drive_count);
-                stat2LabelTextView.setText(R.string.loop_drive_count);
-                stat1TextView.setText(String.valueOf(forwardCount));
-                stat2TextView.setText(String.valueOf(rescueCount));
-                break;
-
             case SharedViewModel.EXERCISE_BACKHAND_DRIVE:
 
                 stat1LabelTextView.setText(R.string.drive_count);
-                stat2LabelTextView.setText(R.string.rescue_count);
+                stat2LabelTextView.setText(R.string.loop_drive_count);
                 stat1TextView.setText(String.valueOf(forwardCount));
                 stat2TextView.setText(String.valueOf(rescueCount));
                 break;

@@ -182,7 +182,7 @@ public class DetectForwardUpwardMove extends FragmentActivity {
         // trigger vibration only for rescues in backhand drive
         if (mModel.getCurrentExercise().getValue() != null &&
                 mModel.getCurrentExercise().getValue().equals(SharedViewModel.EXERCISE_BACKHAND_DRIVE)) {
-            Utils.triggerVibration(this);
+            //Utils.triggerVibration(this);
         }
         rescueCount++;
         mModel.getRescueCount().setValue(rescueCount);

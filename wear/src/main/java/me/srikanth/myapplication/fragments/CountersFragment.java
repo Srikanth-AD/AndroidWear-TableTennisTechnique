@@ -42,7 +42,7 @@ public class CountersFragment extends Fragment {
                 switch (s) {
                     case SharedViewModel.EXERCISE_BACKHAND_DRIVE:
                         stat1LabelTextView.setText(R.string.drive);
-                        stat2LabelTextView.setText(R.string.rescue);
+                        stat2LabelTextView.setText(R.string.loop_drive);
                         break;
 
                     case SharedViewModel.EXERCISE_FOREHAND_DRIVE:

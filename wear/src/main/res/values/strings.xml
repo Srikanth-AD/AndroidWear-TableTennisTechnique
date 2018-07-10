@@ -30,8 +30,8 @@
     <string name="h_m_s">h:m:s</string>
     <string-array name="tabletennis_exercises">
         <item>Backhand Drive</item>
-        <item>Forehand Drive</item>
+        <!--<item>Forehand Drive</item>-->
         <item>Backhand Loop</item>
-        <item>Forehand Loop</item>
+        <!--<item>Forehand Loop</item>-->
     </string-array>
 </resources>
