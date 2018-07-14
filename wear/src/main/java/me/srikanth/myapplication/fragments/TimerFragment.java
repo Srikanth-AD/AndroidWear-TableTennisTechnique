@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import me.srikanth.myapplication.R;
+import me.srikanth.myapplication.helpers.Utils;
 import me.srikanth.myapplication.models.SharedViewModel;
 
 public class TimerFragment extends Fragment {
@@ -51,6 +52,8 @@ public class TimerFragment extends Fragment {
 
                 pauseBtn.setVisibility(View.VISIBLE);
                 pauseBtnLabel.setVisibility(View.VISIBLE);
+
+                Utils.triggerVibration(getActivity());
             }
         });
 
@@ -67,6 +70,8 @@ public class TimerFragment extends Fragment {
 
                 stopBtn.setVisibility(View.VISIBLE);
                 stopBtnLabel.setVisibility(View.VISIBLE);
+
+                Utils.triggerVibration(getActivity());
             }
         });
 
@@ -83,6 +88,8 @@ public class TimerFragment extends Fragment {
 
                 pauseBtn.setVisibility(View.VISIBLE);
                 pauseBtnLabel.setVisibility(View.VISIBLE);
+
+                Utils.triggerVibration(getActivity());
             }
         });
 
@@ -100,6 +107,8 @@ public class TimerFragment extends Fragment {
 
                 startBtn.setVisibility(View.VISIBLE);
                 startBtnLabel.setVisibility(View.VISIBLE);
+
+                Utils.triggerVibration(getActivity());
             }
         });
 

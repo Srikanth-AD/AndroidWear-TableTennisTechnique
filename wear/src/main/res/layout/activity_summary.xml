@@ -14,20 +14,21 @@
                 <TextView
                     android:id="@+id/summaryHeadingText"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/heading_text_height"
+                    android:paddingTop="@dimen/heading_text_padding_top"
                     android:gravity="center_horizontal|center_vertical"
                     android:textSize="@dimen/heading_text_font_size"
                     android:text="@string/summary"
                     android:textColor="@color/heading_text"
                     android:background="@color/heading_bg"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_marginBottom="10dp" />
 
                 <TextView
                     android:id="@+id/exerciseName"
                     android:gravity="center_horizontal"
                     android:layout_width="match_parent"
-                    android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
+                    android:textStyle="bold"
                     android:layout_below="@id/summaryHeadingText"
                     android:layout_height="wrap_content" />
 
@@ -112,7 +113,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="15dp"
+                            android:layout_marginBottom="20dp"
                             android:orientation="vertical">
                                 <TextView
                                     android:id="@+id/avgPeakAccelerationLabel"

@@ -35,9 +35,8 @@
                 android:id="@+id/stat1Label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAllCaps="true"
                 android:textColor="@color/text_label"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_label_font_size"
                 android:weightSum="0.5" />
 
         </LinearLayout>
@@ -61,9 +60,8 @@
                 android:id="@+id/stat2Label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAllCaps="true"
                 android:textColor="@color/text_label"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_label_font_size"
                 android:textStyle="normal"
                 android:weightSum="0.5" />
 
