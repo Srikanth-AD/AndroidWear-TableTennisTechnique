@@ -1,18 +1,16 @@
 package me.srikanth.myapplication.fragments;
 
 import android.arch.lifecycle.Observer;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import me.srikanth.myapplication.R;
-import me.srikanth.myapplication.helpers.Utils;
 import me.srikanth.myapplication.models.SharedViewModel;
 
 public class CountersFragment extends Fragment {

@@ -34,7 +34,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.DetectForwardUpwardMove" />
-        <activity android:name=".activities.SummaryActivity"></activity>
     </application>
 
 </manifest>

@@ -9,7 +9,10 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -18,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.srikanth.myapplication.R;
+import me.srikanth.myapplication.fragments.CountersFragment;
+import me.srikanth.myapplication.fragments.SummaryFragment;
 import me.srikanth.myapplication.fragments.TimerFragment;
 import me.srikanth.myapplication.models.SharedViewModel;
 import me.srikanth.myapplication.helpers.Utils;
@@ -58,6 +63,16 @@ public class DetectForwardUpwardMove extends FragmentActivity {
         mSensorManager = ((SensorManager) getSystemService(SENSOR_SERVICE));
         mLinearAcceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         mGravitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+
+        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        final SummaryFragment summaryFragment = (SummaryFragment)
+                getSupportFragmentManager().findFragmentById(R.id.summary_fragment);
+        final CountersFragment countersFragment = (CountersFragment)
+                getSupportFragmentManager().findFragmentById(R.id.counters_fragment);
+        final TimerFragment timerFragment = (TimerFragment)
+                getSupportFragmentManager().findFragmentById(R.id.timer_fragment);
+
+        ft.hide(summaryFragment).commit();
 
         final Observer<String> timerObserver = new Observer<String>() {
             @Override
@@ -103,15 +118,13 @@ public class DetectForwardUpwardMove extends FragmentActivity {
                 // On Stop, display summary
                 if (newTimerModeName != null && newTimerModeName.equals(TimerFragment.TIMER_MODE_STOPPED)) {
 
-                    Intent i = new Intent(getApplicationContext(), SummaryActivity.class);
-                    i.putExtra("exerciseName", mModel.getCurrentExercise().getValue());
-                    i.putExtra("startTime", mModel.getStartTime().getValue());
-                    i.putExtra("stopTime", mModel.getStopTime().getValue());
-                    i.putExtra("forwardCount", mModel.getForwardCount().getValue());
-                    i.putExtra("rescueCount", mModel.getRescueCount().getValue());
-                    i.putExtra("avgPeakAcceleration", (int) Utils.average(peakAccelerations));
+                    mModel.getAvgPeakAcceleration().setValue((int) Utils.average(peakAccelerations));
 
-                    startActivity(i);
+                    // Display: Summary
+                    FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
+                    ft1.hide(countersFragment);
+                    ft1.hide(timerFragment);
+                    ft1.show(summaryFragment).commit();
                 }
             }
         };
@@ -178,12 +191,6 @@ public class DetectForwardUpwardMove extends FragmentActivity {
     }
 
     private void incrementRescueCount() {
-
-        // trigger vibration only for rescues in backhand drive
-        if (mModel.getCurrentExercise().getValue() != null &&
-                mModel.getCurrentExercise().getValue().equals(SharedViewModel.EXERCISE_BACKHAND_DRIVE)) {
-            //Utils.triggerVibration(this);
-        }
         rescueCount++;
         mModel.getRescueCount().setValue(rescueCount);
     }

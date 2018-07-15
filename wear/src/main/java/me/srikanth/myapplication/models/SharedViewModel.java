@@ -22,6 +22,7 @@ public class SharedViewModel extends ViewModel {
     private MutableLiveData<Long> stopTime;
     private MutableLiveData<Integer> forwardCount;
     private MutableLiveData<Integer> rescueCount;
+    private MutableLiveData<Integer> avgPeakAcceleration;
 
     public MutableLiveData<String> getCurrentExercise() {
         if (currentExercise == null) {
@@ -65,5 +66,13 @@ public class SharedViewModel extends ViewModel {
             forwardCount.setValue(0);
         }
         return rescueCount;
+    }
+
+    public MutableLiveData<Integer> getAvgPeakAcceleration() {
+        if (avgPeakAcceleration == null) {
+            avgPeakAcceleration = new MutableLiveData<>();
+            avgPeakAcceleration.setValue(0);
+        }
+        return avgPeakAcceleration;
     }
 }
