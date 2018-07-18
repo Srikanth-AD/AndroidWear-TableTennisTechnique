@@ -118,6 +118,7 @@ public class DetectForwardUpwardMove extends FragmentActivity {
                 // On Stop, display summary
                 if (newTimerModeName != null && newTimerModeName.equals(TimerFragment.TIMER_MODE_STOPPED)) {
 
+                    //Log.d("Detect class: avg peak acc", Integer.toString((int) Utils.average(peakAccelerations)));
                     mModel.getAvgPeakAcceleration().setValue((int) Utils.average(peakAccelerations));
 
                     // Display: Summary

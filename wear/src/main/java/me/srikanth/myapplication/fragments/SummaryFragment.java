@@ -34,10 +34,25 @@ public class SummaryFragment extends Fragment {
         final TextView stat2TextView = view.findViewById(R.id.stat2);
         final TextView avgPeakAccelerationTextView = view.findViewById(R.id.avgPeakAcceleration);
 
+
+        final Observer<Integer> avgPeakAccelerationObserver = new Observer<Integer>() {
+            @Override
+            public void onChanged(@Nullable Integer newAvgPeakAcceleration) {
+                if (newAvgPeakAcceleration != null) {
+
+                    avgPeakAccelerationTextView.setText(String.valueOf(Utils.convertms2tomph(
+                            newAvgPeakAcceleration)));
+                    avgPeakAccelerationTextView.append(" "); // @todo clean up using string templates
+                    avgPeakAccelerationTextView.append(getText(R.string.mph));
+                }
+            }
+        };
+
         final Observer<String> timerObserver = new Observer<String>() {
 
             @Override
             public void onChanged(@Nullable final String newTimerModeName) {
+
                 Log.d("new timer mode", newTimerModeName + "");
                 if (newTimerModeName != null &&
                         newTimerModeName.equals(TimerFragment.TIMER_MODE_STOPPED))
@@ -48,22 +63,15 @@ public class SummaryFragment extends Fragment {
                         return;
                     }
 
-                    Log.d("avgpeakacc", mModel.getForwardCount().getValue() + "");
-
                     exerciseNameTextView.setText(mModel.getCurrentExercise().getValue());
 
-                    if (mModel.getStartTime().getValue() != null && mModel.getStopTime().getValue() != null) {
+                    Log.d("forward count", mModel.getForwardCount().getValue() + "");
+
+                    if (mModel.getStartTime().getValue() != null &&
+                            mModel.getStopTime().getValue() != null) {
                         activeTimeTextView.setText(Utils.timeConversion(
                                 mModel.getStartTime().getValue(),mModel.getStopTime().getValue()));
                     }
-
-                    if (mModel.getAvgPeakAcceleration().getValue() != null) {
-                        avgPeakAccelerationTextView.setText(String.valueOf(Utils.convertms2tomph(
-                                mModel.getAvgPeakAcceleration().getValue())));
-                    }
-
-                    avgPeakAccelerationTextView.append(" "); // @todo clean up using string templates
-                    avgPeakAccelerationTextView.append(getText(R.string.mph));
 
                     switch (mModel.getCurrentExercise().getValue()) {
 
@@ -93,6 +101,7 @@ public class SummaryFragment extends Fragment {
         };
 
         mModel.getCurrentTimerMode().observe(this, timerObserver);
+        mModel.getAvgPeakAcceleration().observe(this, avgPeakAccelerationObserver);
         return view;
     }
 }
