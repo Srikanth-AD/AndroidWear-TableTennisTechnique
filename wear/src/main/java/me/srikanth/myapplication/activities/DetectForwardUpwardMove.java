@@ -96,13 +96,13 @@ public class DetectForwardUpwardMove extends FragmentActivity {
                     if (mGravitySensor != null) {
                         mSensorManager.registerListener(_SensorEventListener,
                                 mGravitySensor,
-                                SensorManager.SENSOR_DELAY_NORMAL);
+                                SensorManager.SENSOR_DELAY_FASTEST);
                     }
 
                     if (mLinearAcceleration != null) {
                         mSensorManager.registerListener(_SensorEventListener,
                                 mLinearAcceleration,
-                                SensorManager.SENSOR_DELAY_NORMAL);
+                                SensorManager.SENSOR_DELAY_FASTEST);
                     }
                 }
 
