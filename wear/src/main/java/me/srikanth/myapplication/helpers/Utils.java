@@ -17,9 +17,10 @@ public class Utils {
         }
     }
 
-    // Seconds to hours:minutes:seconds
+    // Seconds to readable string of hours minutes and seconds
     public static String timeConversion(long startTime, long stopTime) {
 
+        String result = "";
         final int totalSeconds = (int) ((stopTime - startTime ) / 1000);
         final int MINUTES_IN_AN_HOUR = 60;
         final int SECONDS_IN_A_MINUTE = 60;
@@ -28,9 +29,24 @@ public class Utils {
         int totalMinutes = totalSeconds / SECONDS_IN_A_MINUTE;
         int minutes = totalMinutes % MINUTES_IN_AN_HOUR;
         int hours = totalMinutes / MINUTES_IN_AN_HOUR;
-        return hours + ":" + minutes + ":" + seconds;
+
+        if (hours > 0) { result = result.concat(Integer.toString(hours)); }
+        if (hours == 1) { result = result.concat(" hr "); }
+        if (hours > 1) { result = result.concat(" hrs "); }
+
+        if (minutes > 0) { result = result.concat(Integer.toString(minutes)); }
+        if (minutes == 1) { result = result.concat(" min "); }
+        if (minutes > 1) { result = result.concat(" mins "); }
+
+        result = result.concat(Integer.toString(seconds));
+        if (seconds == 0 || seconds > 1) { result = result.concat(" secs "); }
+        if (seconds == 1) { result = result.concat(" sec"); }
+
+        Log.d("timeConversion: result", result);
+        return result;
     }
 
+    // Returns average of integers
     public static float average(List<Integer> itemList) {
         if (itemList.size() < 1) {
             return 0;

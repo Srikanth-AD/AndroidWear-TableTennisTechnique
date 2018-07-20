@@ -34,20 +34,6 @@ public class SummaryFragment extends Fragment {
         final TextView stat2TextView = view.findViewById(R.id.stat2);
         final TextView avgPeakAccelerationTextView = view.findViewById(R.id.avgPeakAcceleration);
 
-
-        final Observer<Integer> avgPeakAccelerationObserver = new Observer<Integer>() {
-            @Override
-            public void onChanged(@Nullable Integer newAvgPeakAcceleration) {
-                if (newAvgPeakAcceleration != null) {
-
-                    avgPeakAccelerationTextView.setText(String.valueOf(Utils.convertms2tomph(
-                            newAvgPeakAcceleration)));
-                    avgPeakAccelerationTextView.append(" "); // @todo clean up using string templates
-                    avgPeakAccelerationTextView.append(getText(R.string.mph));
-                }
-            }
-        };
-
         final Observer<String> timerObserver = new Observer<String>() {
 
             @Override
@@ -70,7 +56,7 @@ public class SummaryFragment extends Fragment {
                     if (mModel.getStartTime().getValue() != null &&
                             mModel.getStopTime().getValue() != null) {
                         activeTimeTextView.setText(Utils.timeConversion(
-                                mModel.getStartTime().getValue(),mModel.getStopTime().getValue()));
+                                mModel.getStartTime().getValue(), mModel.getStopTime().getValue()));
                     }
 
                     switch (mModel.getCurrentExercise().getValue()) {
@@ -96,6 +82,18 @@ public class SummaryFragment extends Fragment {
                         default:
                             break;
                     }
+                }
+            }
+        };
+
+        final Observer<Integer> avgPeakAccelerationObserver = new Observer<Integer>() {
+            @Override
+            public void onChanged(@Nullable Integer newAvgPeakAcceleration) {
+                if (newAvgPeakAcceleration != null) {
+
+                    avgPeakAccelerationTextView.setText(String.valueOf(Utils.convertms2tomph(
+                            newAvgPeakAcceleration)));
+                    avgPeakAccelerationTextView.append(" " + getString(R.string.mph));
                 }
             }
         };

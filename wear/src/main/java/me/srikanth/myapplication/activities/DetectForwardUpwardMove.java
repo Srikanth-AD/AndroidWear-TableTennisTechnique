@@ -9,23 +9,19 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import me.srikanth.myapplication.R;
 import me.srikanth.myapplication.fragments.CountersFragment;
 import me.srikanth.myapplication.fragments.SummaryFragment;
 import me.srikanth.myapplication.fragments.TimerFragment;
-import me.srikanth.myapplication.models.SharedViewModel;
 import me.srikanth.myapplication.helpers.Utils;
+import me.srikanth.myapplication.models.SharedViewModel;
 
 public class DetectForwardUpwardMove extends FragmentActivity {
 
@@ -116,9 +112,13 @@ public class DetectForwardUpwardMove extends FragmentActivity {
                 }
 
                 // On Stop, display summary
-                if (newTimerModeName != null && newTimerModeName.equals(TimerFragment.TIMER_MODE_STOPPED)) {
+                if (newTimerModeName != null &&
+                        newTimerModeName.equals(TimerFragment.TIMER_MODE_STOPPED)) {
 
-                    //Log.d("Detect class: avg peak acc", Integer.toString((int) Utils.average(peakAccelerations)));
+                    // At this state, practice has stopped hence,
+                    // FLAG_KEEP_SCREEN_ON can be cleared to save battery
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
                     mModel.getAvgPeakAcceleration().setValue((int) Utils.average(peakAccelerations));
 
                     // Display: Summary

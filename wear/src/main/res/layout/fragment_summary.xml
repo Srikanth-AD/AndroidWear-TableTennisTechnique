@@ -50,13 +50,6 @@
                 android:textColor="@color/text"
                 android:textSize="@dimen/text_font_size"
                 android:gravity="center_horizontal" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_label_font_size"
-                android:text="@string/h_m_s"
-                android:textColor="@color/text_label"
-                android:gravity="center_horizontal" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
