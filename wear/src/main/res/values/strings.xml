@@ -28,10 +28,12 @@
     <string name="rescue_count">Rescue Count</string>
     <string name="select_exercise">Select an Exercise</string>
     <string name="h_m_s">h:m:s</string>
+    <string name="loading">Initializing &#8230;</string>
     <string-array name="tabletennis_exercises">
         <item>Backhand Drive</item>
         <item>Forehand Drive</item>
-        <item>Backhand Loop</item>
+        <!--<item>Backhand Loop</item>-->
         <!--<item>Forehand Loop</item>-->
     </string-array>
+    <string name="calibration_error_msg">Sorry, sensors required for this app to accurately track Table Tennis strokes in real time are not available at high accuracy on this device.</string>
 </resources>

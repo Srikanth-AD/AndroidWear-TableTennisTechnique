@@ -2,6 +2,7 @@ package me.srikanth.myapplication.activities;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -23,11 +24,13 @@ import me.srikanth.myapplication.fragments.TimerFragment;
 import me.srikanth.myapplication.helpers.Utils;
 import me.srikanth.myapplication.models.SharedViewModel;
 
+import static me.srikanth.myapplication.fragments.TimerFragment.TIMER_MODE_STARTED;
+
 public class DetectForwardUpwardMove extends FragmentActivity {
 
     private SensorManager mSensorManager;
-    private Sensor mLinearAcceleration;
     private Sensor mGravitySensor;
+    private Sensor mAccelerometer;
     public SensorEventListener _SensorEventListener;
     int forwardCount, rescueCount = 0;
     int accelerationPeakValue = 0;
@@ -38,8 +41,9 @@ public class DetectForwardUpwardMove extends FragmentActivity {
     private static final float GRAVITY_THRESHOLD = 5.5f; // to differentiate forward versus upward movement
     private static final int MIN_LINEAR_ACCELERATION_AT_PEAK = 11; // minimum acceptable peak acceleration during a rep
     private  static final int MAX_LINEAR_ACCELERATION_AT_REST = 3;  // due to normal hand movement, acceleration may never be zero
-    private static final long TIME_THRESHOLD_NS = 1800000000; // in nanoseconds (= 2sec)
+    private static final long TIME_THRESHOLD_NS = 1500000000; // in nanoseconds (= 1.5sec)
     List<Integer> peakAccelerations = new ArrayList<>();
+    float gravityXValue = 0.0f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +59,8 @@ public class DetectForwardUpwardMove extends FragmentActivity {
         headingText.setText(mModel.getCurrentExercise().getValue());
 
         resetCountsPerSession();
-
-        mSensorManager = ((SensorManager) getSystemService(SENSOR_SERVICE));
-        mLinearAcceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        mGravitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+        initSensors();
+        getSensorList();
 
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         final SummaryFragment summaryFragment = (SummaryFragment)
@@ -79,27 +81,17 @@ public class DetectForwardUpwardMove extends FragmentActivity {
 
                 // Started
                 if (newTimerModeName != null &&
-                        newTimerModeName.equals(TimerFragment.TIMER_MODE_STARTED)) {
+                        newTimerModeName.equals(TIMER_MODE_STARTED)) {
                     resetCountsPerSession();
                 }
 
                 // Started or Resumed
                 if (newTimerModeName != null &&
-                        (newTimerModeName.equals(TimerFragment.TIMER_MODE_STARTED) ||
+                        (newTimerModeName.equals(TIMER_MODE_STARTED) ||
                         newTimerModeName.equals(TimerFragment.TIMER_MODE_RESUMED))
                         ) {
 
-                    if (mGravitySensor != null) {
-                        mSensorManager.registerListener(_SensorEventListener,
-                                mGravitySensor,
-                                SensorManager.SENSOR_DELAY_FASTEST);
-                    }
-
-                    if (mLinearAcceleration != null) {
-                        mSensorManager.registerListener(_SensorEventListener,
-                                mLinearAcceleration,
-                                SensorManager.SENSOR_DELAY_FASTEST);
-                    }
+                    registerListeners();
                 }
 
                 // Paused or Stopped
@@ -140,15 +132,32 @@ public class DetectForwardUpwardMove extends FragmentActivity {
             @Override
             public void onSensorChanged(SensorEvent event) {
 
+                Log.d("sensor event type and accuracy",  event.sensor.getType() + " " + event.accuracy + "");
+
                 switch (event.sensor.getType()) {
 
                     case Sensor.TYPE_GRAVITY:
+
+                        Log.d("Gravity X, Y axis",
+                                event.values[0] + " " + event.values[1]);
+
+                        gravityXValue = event.values[0];
+
                         if (Math.abs(event.values[0]) > gravityPeak) {
                             gravityPeak = Math.abs(event.values[0]);
                         }
                         break;
 
-                    case Sensor.TYPE_LINEAR_ACCELERATION:
+                    case Sensor.TYPE_ACCELEROMETER:
+
+                        Log.d("Accelerometer values: X, Y",
+                                event.values[0] +  " " + event.values[1]);
+
+                        Log.d("Converted - Linear acceleration value",
+                                accelerometerToLinearAcc(event.values[0], gravityXValue) + "");
+
+                        // Convert accelerometer reading to linear acceleration
+                        event.values[0] = accelerometerToLinearAcc(event.values[0], gravityXValue);
 
                         // acceleration peak & gravity peak are no longer valid after TIME_THRESHOLD_NS
                         if (event.timestamp - accelerationPeakTimestamp > TIME_THRESHOLD_NS) {
@@ -164,6 +173,7 @@ public class DetectForwardUpwardMove extends FragmentActivity {
                                 Math.abs(event.values[0]) <= MAX_LINEAR_ACCELERATION_AT_REST &&
                                 accelerationPeakValue > MIN_LINEAR_ACCELERATION_AT_PEAK) {
 
+                            Log.d("Gravity Peak", gravityPeak + "");
                             if (gravityPeak <= GRAVITY_THRESHOLD) {
                                 incrementForwardCount();
                             } else {
@@ -175,6 +185,10 @@ public class DetectForwardUpwardMove extends FragmentActivity {
                         }
                         break;
 
+                    case Sensor.TYPE_LINEAR_ACCELERATION:
+                        Log.d("Linear acceleration - X axis", event.values[0] + "");
+                        break;
+
                     default:
                         Log.d("Unknown sensor",  String.valueOf(event.sensor.getType()));
                 }
@@ -182,8 +196,49 @@ public class DetectForwardUpwardMove extends FragmentActivity {
 
             @Override
             public void onAccuracyChanged(Sensor sensor, int accuracy) {
+                Log.d("accuracy change" , sensor.getType() + " " + accuracy);
             }
         };
+    }
+
+    // Convert accelerometer reading to linear acceleration - for ONE SPECIFIC AXIS
+    // Ref: https://developer.android.com/guide/topics/sensors/sensors_motion#sensors-motion-linear
+    private float accelerometerToLinearAcc(float accelerometerValue, float gravityValue) {
+        float alpha = 0.8f;
+
+        // Isolate the force of gravity with the low-pass filter.
+        gravityValue = alpha * gravityValue + (1 - alpha) * accelerometerValue;
+
+        // Remove the gravity contribution with the high-pass filter.
+        return accelerometerValue - gravityValue;
+    }
+
+    // Get list of sensors available on the wearable device
+    private void getSensorList() {
+        final List<Sensor> deviceSensors = mSensorManager.getSensorList(Sensor.TYPE_ALL);
+        for(Sensor type : deviceSensors){
+            Log.d("sensors",type.getStringType());
+        }
+    }
+
+    private void initSensors() {
+        mSensorManager = ((SensorManager) getSystemService(SENSOR_SERVICE));
+        mGravitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+    }
+
+    private void registerListeners() {
+        if (mGravitySensor != null) {
+            mSensorManager.registerListener(_SensorEventListener,
+                    mGravitySensor,
+                    SensorManager.SENSOR_DELAY_FASTEST);
+        }
+
+        if (mAccelerometer != null) {
+            mSensorManager.registerListener(_SensorEventListener,
+                    mAccelerometer,
+                    SensorManager.SENSOR_DELAY_FASTEST);
+        }
     }
 
     private void incrementForwardCount() {
@@ -212,6 +267,21 @@ public class DetectForwardUpwardMove extends FragmentActivity {
     protected void onPause() {
         super.onPause();
         mSensorManager.unregisterListener(_SensorEventListener);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // On resume: if practice is in progress, register listeners
+        if (mModel.getCurrentTimerMode().getValue() != null &&
+                (mModel.getCurrentTimerMode().getValue().equals(TimerFragment.TIMER_MODE_STARTED)
+                        ||
+                mModel.getCurrentTimerMode().getValue().equals(TimerFragment.TIMER_MODE_RESUMED)
+                )
+            ) {
+            registerListeners();
+        }
     }
 
     @Override
