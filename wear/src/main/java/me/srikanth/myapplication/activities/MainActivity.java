@@ -98,7 +98,7 @@ public class MainActivity extends FragmentActivity {
         Log.d("areSensorsWorking", areSensorsWorking  + "");
 
         loadingTextView.setVisibility(View.GONE);
-
+        areSensorsWorking = true; // @remove
         if (areSensorsWorking) {
             sensorsLowAccuracyTextView.setVisibility(View.GONE);
             listview.setVisibility(View.VISIBLE);

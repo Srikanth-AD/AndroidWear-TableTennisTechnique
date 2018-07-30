@@ -23,6 +23,7 @@ public class SharedViewModel extends ViewModel {
     private MutableLiveData<Integer> forwardCount;
     private MutableLiveData<Integer> rescueCount;
     private MutableLiveData<Integer> avgPeakAcceleration;
+    private MutableLiveData<Boolean> isAmbinetModeEnabled;
 
     public MutableLiveData<String> getCurrentExercise() {
         if (currentExercise == null) {
@@ -74,5 +75,13 @@ public class SharedViewModel extends ViewModel {
             avgPeakAcceleration.setValue(0);
         }
         return avgPeakAcceleration;
+    }
+
+    public MutableLiveData<Boolean> getIsAmbinetModeEnabled() {
+        if (isAmbinetModeEnabled == null) {
+            isAmbinetModeEnabled = new MutableLiveData<>();
+            isAmbinetModeEnabled.setValue(false);
+        }
+        return isAmbinetModeEnabled;
     }
 }

@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.wear.ambient.AmbientModeSupport;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -26,7 +27,7 @@ import me.srikanth.myapplication.models.SharedViewModel;
 
 import static me.srikanth.myapplication.fragments.TimerFragment.TIMER_MODE_STARTED;
 
-public class DetectForwardUpwardMove extends FragmentActivity {
+public class DetectForwardUpwardMove extends FragmentActivity implements AmbientModeSupport.AmbientCallbackProvider {
 
     private SensorManager mSensorManager;
     private Sensor mGravitySensor;
@@ -45,11 +46,18 @@ public class DetectForwardUpwardMove extends FragmentActivity {
     List<Integer> peakAccelerations = new ArrayList<>();
     float gravityXValue = 0.0f;
 
+    /*
+     * Declare an ambient mode controller, which will be used by
+     * the activity to determine if the current mode is ambient.
+     */
+    private AmbientModeSupport.AmbientController mAmbientController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detect_forward_upward_move);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // @todo add ambient mode support
+
+        mAmbientController = AmbientModeSupport.attach(this);
         mModel = ViewModelProviders.of(this).get(SharedViewModel.class);
 
         Intent intent = getIntent();
@@ -125,6 +133,35 @@ public class DetectForwardUpwardMove extends FragmentActivity {
         mModel.getCurrentTimerMode().observe(this, timerObserver);
         getSensorData();
     }
+
+    @Override
+    public AmbientModeSupport.AmbientCallback getAmbientCallback() {
+        Log.d("getAmbientCallback", "MyAmbientCallback");
+        return new MyAmbientCallback();
+    }
+
+    private class MyAmbientCallback extends AmbientModeSupport.AmbientCallback {
+
+        @Override
+        public void onEnterAmbient(Bundle ambientDetails) {
+            super.onEnterAmbient(ambientDetails);
+            mModel.getIsAmbinetModeEnabled().setValue(true);
+        }
+
+        @Override
+        public void onExitAmbient() {
+            super.onExitAmbient();
+            Log.d("MyAmbientCallback", "onExitAmbient");
+            mModel.getIsAmbinetModeEnabled().setValue(false);
+        }
+
+        @Override
+        public void onUpdateAmbient() {
+            super.onUpdateAmbient();
+            Log.d("MyAmbientCallback", "onUpdateAmbient");
+        }
+    }
+
 
     private void getSensorData() {
 

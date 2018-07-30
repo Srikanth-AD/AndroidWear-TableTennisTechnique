@@ -1,8 +1,11 @@
 package me.srikanth.myapplication.fragments;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +27,7 @@ public class TimerFragment extends Fragment {
     public static final String TIMER_MODE_PAUSED = "paused";
     public static final String TIMER_MODE_RESUMED = "resumed";
     public static final String TIMER_MODE_STOPPED = "stopped";
+    private String currentTimerMode;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -111,6 +115,106 @@ public class TimerFragment extends Fragment {
                 Utils.triggerVibration(getActivity());
             }
         });
+
+        // Switch action button display on or off based on Ambient mode: enabled or not
+        final Observer<Boolean> ambientModeObserver = new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable final Boolean newIsAmbientModeValue) {
+                Log.d("TimerFragment: ambientModeObserver", newIsAmbientModeValue + "");
+
+                // Ambient mode: on
+                if (newIsAmbientModeValue != null && newIsAmbientModeValue) {
+
+                    // TIMER_MODE_INACTIVE
+                    if (currentTimerMode.equals(TIMER_MODE_INACTIVE)) {
+                        startBtn.setVisibility(View.INVISIBLE);
+                        startBtnLabel.setVisibility(View.INVISIBLE);
+                    }
+
+                    // TIMER_MODE_STARTED
+                    if (currentTimerMode.equals(TIMER_MODE_STARTED)) {
+
+                        pauseBtn.setVisibility(View.INVISIBLE);
+                        pauseBtnLabel.setVisibility(View.INVISIBLE);
+                    }
+
+                    // TIMER_MODE_PAUSED
+                    if (currentTimerMode.equals(TIMER_MODE_PAUSED)) {
+
+                        resumeBtn.setVisibility(View.INVISIBLE);
+                        resumeBtnLabel.setVisibility(View.INVISIBLE);
+
+                        stopBtn.setVisibility(View.INVISIBLE);
+                        stopBtnLabel.setVisibility(View.INVISIBLE);
+                    }
+
+                    // TIMER_MODE_RESUMED
+                    if (currentTimerMode.equals(TIMER_MODE_RESUMED)) {
+
+                        pauseBtn.setVisibility(View.INVISIBLE);
+                        pauseBtnLabel.setVisibility(View.INVISIBLE);
+                    }
+
+                    // TIMER_MODE_STOPPED
+                    if (currentTimerMode.equals(TIMER_MODE_STOPPED)) {
+                        startBtn.setVisibility(View.INVISIBLE);
+                        startBtnLabel.setVisibility(View.INVISIBLE);
+                    }
+
+                } else {
+
+                    // Ambient mode: off
+                    // TIMER_MODE_INACTIVE
+                    if (currentTimerMode.equals(TIMER_MODE_INACTIVE)) {
+                        startBtn.setVisibility(View.VISIBLE);
+                        startBtnLabel.setVisibility(View.VISIBLE);
+                    }
+
+                    // TIMER_MODE_STARTED
+                    if (currentTimerMode.equals(TIMER_MODE_STARTED)) {
+
+                        pauseBtn.setVisibility(View.VISIBLE);
+                        pauseBtnLabel.setVisibility(View.VISIBLE);
+                    }
+
+                    // TIMER_MODE_PAUSED
+                    if (currentTimerMode.equals(TIMER_MODE_PAUSED)) {
+
+                        resumeBtn.setVisibility(View.VISIBLE);
+                        resumeBtnLabel.setVisibility(View.VISIBLE);
+
+                        stopBtn.setVisibility(View.VISIBLE);
+                        stopBtnLabel.setVisibility(View.VISIBLE);
+                    }
+
+                    // TIMER_MODE_RESUMED
+                    if (currentTimerMode.equals(TIMER_MODE_RESUMED)) {
+
+                        pauseBtn.setVisibility(View.VISIBLE);
+                        pauseBtnLabel.setVisibility(View.VISIBLE);
+                    }
+
+                    // TIMER_MODE_STOPPED
+                    if (currentTimerMode.equals(TIMER_MODE_STOPPED)) {
+                        startBtn.setVisibility(View.VISIBLE);
+                        startBtnLabel.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        };
+
+        // Set current timer mode to a local variable for use in ambientModeObserver
+        final Observer<String> timerModeObserver = new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable final String newTimerModeValue) {
+                Log.d("TimerFragment: TimerModeObserver - newTimerModeValue",
+                        newTimerModeValue + "");
+                currentTimerMode = newTimerModeValue;
+            }
+        };
+
+        model.getCurrentTimerMode().observe(this, timerModeObserver);
+        model.getIsAmbinetModeEnabled().observe(this, ambientModeObserver);
 
         return view;
     }

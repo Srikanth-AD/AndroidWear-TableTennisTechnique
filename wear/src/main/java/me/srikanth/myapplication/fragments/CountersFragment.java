@@ -2,9 +2,11 @@ package me.srikanth.myapplication.fragments;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,9 +103,26 @@ public class CountersFragment extends Fragment {
             }
         };
 
+        // Switch colors based on Ambient mode: enabled or not
+        final Observer<Boolean> ambientModeObserver = new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable final Boolean newIsAmbientModeValue) {
+                Log.d("CountersFragment: ambientModeObserver", newIsAmbientModeValue + "");
+
+                if (newIsAmbientModeValue != null && newIsAmbientModeValue) {
+                    stat1TextView.setTextColor(Color.WHITE);
+                    stat2TextView.setTextColor(Color.WHITE);
+                } else {
+                    stat1TextView.setTextColor(getResources().getColor(R.color.stat1_color, null));
+                    stat2TextView.setTextColor(getResources().getColor(R.color.stat2_color, null));
+                }
+            }
+        };
+
         mModel.getCurrentExercise().observe(this, currentExerciseObserver);
         mModel.getForwardCount().observe(this, forwardCountObserver);
         mModel.getRescueCount().observe(this, rescueCountObserver);
+        mModel.getIsAmbinetModeEnabled().observe(this, ambientModeObserver);
 
         return view;
     }
