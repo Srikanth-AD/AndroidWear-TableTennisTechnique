@@ -1,8 +1,7 @@
-package me.srikanth.myapplication.activities;
+package me.srikanth.myapplication.views;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -19,13 +18,10 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 import me.srikanth.myapplication.R;
-import me.srikanth.myapplication.fragments.CountersFragment;
-import me.srikanth.myapplication.fragments.SummaryFragment;
-import me.srikanth.myapplication.fragments.TimerFragment;
-import me.srikanth.myapplication.helpers.Utils;
+import me.srikanth.myapplication.controllers.Utils;
 import me.srikanth.myapplication.models.SharedViewModel;
 
-import static me.srikanth.myapplication.fragments.TimerFragment.TIMER_MODE_STARTED;
+import static me.srikanth.myapplication.views.TimerFragment.TIMER_MODE_STARTED;
 
 public class DetectForwardUpwardMove extends FragmentActivity implements AmbientModeSupport.AmbientCallbackProvider {
 

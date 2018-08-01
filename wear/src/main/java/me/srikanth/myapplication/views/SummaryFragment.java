@@ -1,4 +1,4 @@
-package me.srikanth.myapplication.fragments;
+package me.srikanth.myapplication.views;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import me.srikanth.myapplication.R;
-import me.srikanth.myapplication.helpers.Utils;
+import me.srikanth.myapplication.controllers.Utils;
 import me.srikanth.myapplication.models.SharedViewModel;
 
 public class SummaryFragment extends Fragment {

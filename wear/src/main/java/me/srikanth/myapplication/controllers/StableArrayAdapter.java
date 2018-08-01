@@ -1,4 +1,4 @@
-package me.srikanth.myapplication.adapters;
+package me.srikanth.myapplication.controllers;
 
 import android.content.Context;
 import android.widget.ArrayAdapter;

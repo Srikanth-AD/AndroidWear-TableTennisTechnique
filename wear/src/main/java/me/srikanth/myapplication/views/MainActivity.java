@@ -1,4 +1,4 @@
-package me.srikanth.myapplication.activities;
+package me.srikanth.myapplication.views;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -7,6 +7,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -20,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import me.srikanth.myapplication.R;
-import me.srikanth.myapplication.adapters.StableArrayAdapter;
+import me.srikanth.myapplication.controllers.StableArrayAdapter;
 import me.srikanth.myapplication.models.SharedViewModel;
 
 public class MainActivity extends FragmentActivity {
@@ -46,7 +47,17 @@ public class MainActivity extends FragmentActivity {
         headingText = findViewById(R.id.headingText);
         loadingTextView = findViewById(R.id.loadingText);
 
-        checkSensors();
+        // Check sensors
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                Log.d("MainActivity", "Checking sensors on a thread");
+                checkSensors();
+            }
+        };
+
+        Thread t = new Thread(r);
+        t.start();
 
         Resources res = getResources();
         String[] ttStrokesArr = res.getStringArray(R.array.tabletennis_exercises);
@@ -98,7 +109,7 @@ public class MainActivity extends FragmentActivity {
         Log.d("areSensorsWorking", areSensorsWorking  + "");
 
         loadingTextView.setVisibility(View.GONE);
-        areSensorsWorking = true; // @remove
+
         if (areSensorsWorking) {
             sensorsLowAccuracyTextView.setVisibility(View.GONE);
             listview.setVisibility(View.VISIBLE);
@@ -139,7 +150,7 @@ public class MainActivity extends FragmentActivity {
 
                     counter++;
 
-                    if (counter == 30) { // Sample 30 sensor events
+                    if (counter == 30) { // Sample sensor events
                         if (gravitySensorAccuracySum > 0 || accelerometerSensorAccuracySum > 0) {
                             areSensorsWorking = true;
                         }

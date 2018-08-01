@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/black"
-        tools:context=".activities.MainActivity"
+        tools:context=".views.MainActivity"
         tools:deviceIds="wear">
         <RelativeLayout
             android:id="@+id/MainActivityFrameLayout"
@@ -34,7 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/headingText"
-                android:name="me.srikanth.myapplication.fragments.TimerFragment" />
+                android:name="me.srikanth.myapplication.views.TimerFragment" />
 
             <fragment
                 android:id="@+id/counters_fragment"
@@ -42,12 +42,12 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/timer_fragment"
                 android:layout_marginBottom="20dp"
-                android:name="me.srikanth.myapplication.fragments.CountersFragment" />
+                android:name="me.srikanth.myapplication.views.CountersFragment" />
 
             <fragment
                 android:id="@+id/summary_fragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:name="me.srikanth.myapplication.fragments.SummaryFragment" />
+                android:name="me.srikanth.myapplication.views.SummaryFragment" />
         </RelativeLayout>
     </ScrollView>

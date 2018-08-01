@@ -1,4 +1,4 @@
-package me.srikanth.myapplication.helpers;
+package me.srikanth.myapplication.controllers;
 
 import android.content.Context;
 import android.os.Vibrator;

@@ -1,4 +1,4 @@
-package me.srikanth.myapplication.fragments;
+package me.srikanth.myapplication.views;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
