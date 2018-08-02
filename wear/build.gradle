@@ -6,8 +6,8 @@ android {
         applicationId "me.srikanth.myapplication"
         minSdkVersion 25
         targetSdkVersion 27
-        versionCode 11
-        versionName "2.9"
+        versionCode 13
+        versionName "3.0"
     }
     buildTypes {
         release {

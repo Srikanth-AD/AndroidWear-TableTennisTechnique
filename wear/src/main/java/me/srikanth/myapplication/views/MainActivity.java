@@ -7,24 +7,38 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.wear.ambient.AmbientModeSupport;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.wearable.CapabilityClient;
+import com.google.android.gms.wearable.CapabilityInfo;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.Wearable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import me.srikanth.myapplication.R;
 import me.srikanth.myapplication.controllers.StableArrayAdapter;
 import me.srikanth.myapplication.models.SharedViewModel;
 
-public class MainActivity extends FragmentActivity {
+/**
+ * Checks if the phone app is installed on remote device. If it is not, allows user to open app
+ * listing on the phone's Play or App Store.
+ */
+public class MainActivity extends FragmentActivity implements
+        AmbientModeSupport.AmbientCallbackProvider,
+        CapabilityClient.OnCapabilityChangedListener {
 
     private SharedViewModel mModel;
     SensorManager mSensorManager;
@@ -36,10 +50,33 @@ public class MainActivity extends FragmentActivity {
     ListView listview;
     TextView loadingTextView;
 
+    private static final String TAG = "MainWearActivity";
+    private static final String WELCOME_MESSAGE = "Welcome to our Wear app!\n\n";
+    private static final String MISSING_MESSAGE =
+            WELCOME_MESSAGE
+                    + "You are missing the required phone app, please click on the button below to "
+                    + "install it on your phone.\n";
+
+    private static final String INSTALLED_MESSAGE =
+            WELCOME_MESSAGE
+                    + "Mobile app installed on your %s!\n\nYou can now use MessageApi, "
+                    + "DataApi, etc.";
+
+    // Name of capability listed in Phone app's wear.xml.
+    // IMPORTANT NOTE: This should be named differently than your Wear app's capability.
+    private static final String CAPABILITY_PHONE_APP = "verify_remote_phone_app";
+    private Node mAndroidPhoneNodeWithApp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.layout_main);
+
+        // Enables Ambient mode.
+        AmbientModeSupport.attach(this);
+
         mModel = ViewModelProviders.of(this).get(SharedViewModel.class);
         listview = findViewById(R.id.exercise_list);
         mSensorManager = ((SensorManager) getSystemService(SENSOR_SERVICE));
@@ -186,5 +223,114 @@ public class MainActivity extends FragmentActivity {
         mSensorManager.registerListener(_SensorEventListener,
                 mAccelerometer,
                 SensorManager.SENSOR_DELAY_FASTEST);
+    }
+
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause()");
+        super.onPause();
+
+        Wearable.getCapabilityClient(this).removeListener(this, CAPABILITY_PHONE_APP);
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume()");
+        super.onResume();
+
+        Wearable.getCapabilityClient(this).addListener(this, CAPABILITY_PHONE_APP);
+
+        checkIfPhoneHasApp();
+    }
+
+    /*
+     * Updates (UI) when capabilities change (install/uninstall phone app).
+     */
+    public void onCapabilityChanged(CapabilityInfo capabilityInfo) {
+        Log.d(TAG, "onCapabilityChanged(): " + capabilityInfo);
+
+        mAndroidPhoneNodeWithApp = pickBestNodeId(capabilityInfo.getNodes());
+        verifyNodeAndUpdateUI();
+    }
+
+    private void checkIfPhoneHasApp() {
+        Log.d(TAG, "checkIfPhoneHasApp()");
+
+        Task<CapabilityInfo> capabilityInfoTask = Wearable.getCapabilityClient(this)
+                .getCapability(CAPABILITY_PHONE_APP, CapabilityClient.FILTER_ALL);
+
+        capabilityInfoTask.addOnCompleteListener(new OnCompleteListener<CapabilityInfo>() {
+            @Override
+            public void onComplete(Task<CapabilityInfo> task) {
+
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "Capability request succeeded.");
+                    CapabilityInfo capabilityInfo = task.getResult();
+                    mAndroidPhoneNodeWithApp = pickBestNodeId(capabilityInfo.getNodes());
+
+                } else {
+                    Log.d(TAG, "Capability request failed to return any results.");
+                }
+
+                verifyNodeAndUpdateUI();
+            }
+        });
+    }
+
+    private void verifyNodeAndUpdateUI() {
+
+        if (mAndroidPhoneNodeWithApp != null) {
+
+            // TODO: Add code to communicate with the phone app via
+            // Wear APIs (MessageApi, DataApi, etc.)
+
+            String installMessage =
+                    String.format(INSTALLED_MESSAGE, mAndroidPhoneNodeWithApp.getDisplayName());
+            Log.d(TAG, installMessage);
+
+        } else {
+            Log.d(TAG, MISSING_MESSAGE);
+        }
+    }
+
+    /*
+     * There should only ever be one phone in a node set (much less w/ the correct capability), so
+     * Grab the first one (which should be the only one).
+     */
+    private Node pickBestNodeId(Set<Node> nodes) {
+        Log.d(TAG, "pickBestNodeId(): " + nodes);
+
+        Node bestNodeId = null;
+        // Find a nearby node/phone or pick one arbitrarily. Realistically, there is only one phone.
+        for (Node node : nodes) {
+            bestNodeId = node;
+        }
+        return bestNodeId;
+    }
+
+    @Override
+    public AmbientModeSupport.AmbientCallback getAmbientCallback() {
+        return new MyAmbientCallback();
+    }
+
+    private class MyAmbientCallback extends AmbientModeSupport.AmbientCallback {
+        /** Prepares the UI for ambient mode. */
+        @Override
+        public void onEnterAmbient(Bundle ambientDetails) {
+            super.onEnterAmbient(ambientDetails);
+
+            Log.d(TAG, "onEnterAmbient() " + ambientDetails);
+            // In our case, the assets are already in black and white, so we don't update UI.
+        }
+
+        /** Restores the UI to active (non-ambient) mode. */
+        @Override
+        public void onExitAmbient() {
+            super.onExitAmbient();
+
+            Log.d(TAG, "onExitAmbient()");
+            // In our case, the assets are already in black and white, so we don't update UI.
+        }
     }
 }

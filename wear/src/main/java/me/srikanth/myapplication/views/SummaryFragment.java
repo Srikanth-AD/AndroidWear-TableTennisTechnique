@@ -11,6 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
+
 import me.srikanth.myapplication.R;
 import me.srikanth.myapplication.controllers.Utils;
 import me.srikanth.myapplication.models.SharedViewModel;
@@ -25,6 +31,8 @@ public class SummaryFragment extends Fragment {
 
         mModel = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
         View view = inflater.inflate(R.layout.fragment_summary, container, false);
+
+        final PutDataMapRequest dataMapRequest = PutDataMapRequest.create("/practiceSummary");
 
         final TextView exerciseNameTextView = view.findViewById(R.id.exerciseName);
         final TextView activeTimeTextView = view.findViewById(R.id.activeTime);
@@ -48,6 +56,21 @@ public class SummaryFragment extends Fragment {
                         Log.d("Exercise name", "is null");
                         return;
                     }
+
+                    dataMapRequest.getDataMap()
+                            .putString("exerciseName",
+                                    mModel.getCurrentExercise().getValue() != null ?
+                                            mModel.getCurrentExercise().getValue() : "");
+
+                    dataMapRequest.getDataMap()
+                            .putInt("forwardCount",
+                                    mModel.getForwardCount().getValue() != null ?
+                                            mModel.getForwardCount().getValue() : 0);
+                    dataMapRequest.getDataMap()
+                            .putInt("rescueCount",
+                                    mModel.getRescueCount().getValue() != null ?
+                                            mModel.getRescueCount().getValue() : 0);
+
 
                     exerciseNameTextView.setText(mModel.getCurrentExercise().getValue());
 
@@ -94,12 +117,35 @@ public class SummaryFragment extends Fragment {
                     avgPeakAccelerationTextView.setText(String.valueOf(Utils.convertms2tomph(
                             newAvgPeakAcceleration)));
                     avgPeakAccelerationTextView.append(" " + getString(R.string.mph));
+
+                    dataMapRequest.getDataMap().putInt("avgPeakAcceleration",
+                            newAvgPeakAcceleration > 0 ?
+                                    Utils.convertms2tomph(newAvgPeakAcceleration) : 0);
+
+                    // Send summary to connected phone
+                    PutDataRequest putDataRequest = dataMapRequest.asPutDataRequest();
+                    putDataRequest.setUrgent();
+                    Task<DataItem> putTask = Wearable.getDataClient(getActivity()).putDataItem(putDataRequest);
                 }
             }
         };
 
         mModel.getCurrentTimerMode().observe(this, timerObserver);
         mModel.getAvgPeakAcceleration().observe(this, avgPeakAccelerationObserver);
+
         return view;
+    }
+
+    public void sendSummaryToWearable() {
+        Log.d("SummaryFragment", "sendSummaryToWearable()");
+
+
+        //dataMapRequest.getDataMap().putInt("forwardCount", mModel.getForwardCount().getValue() != null ? mModel.getForwardCount().getValue() : 0);
+        //dataMapRequest.getDataMap().putInt("rescueCount", mModel.getRescueCount().getValue() != null ? mModel.getRescueCount().getValue() : 0);
+
+
+        // @todo log putTask results
+
+
     }
 }
