@@ -1,5 +1,5 @@
 # AndroidWearTableTennisTechnique
-Android Wear App for Table Tennis Technique 
+ Android Wear App for Table Tennis Technique 
 
 ![promo image](https://raw.githubusercontent.com/modestkdr/AndroidWear-TableTennisTechnique/master/images/Screen%20Shot%202018-07-06%20at%208.07.20%20PM.png)
 
