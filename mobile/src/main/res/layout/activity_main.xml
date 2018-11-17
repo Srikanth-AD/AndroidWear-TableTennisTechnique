@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -23,7 +22,7 @@
         android:layout_below="@+id/information_text_view"
         android:layout_width="350dp"
         android:layout_centerHorizontal="true"
-        android:text="Install App on Wear device(s)"
+        android:text="@string/install_app_on_wear_devices"
         android:layout_marginBottom="20dp"
         android:textColor="@color/white"
         android:background="@color/black"
@@ -41,90 +40,15 @@
         android:layout_below="@+id/remote_open_button"
         android:background="@android:color/darker_gray"/>
 
-    <LinearLayout
-        android:id="@+id/recent_practice_wrapper"
-        android:visibility="invisible"
-        android:layout_below="@+id/separator"
-        android:layout_width="match_parent"
-        android:textSize="16sp"
+    <Button
+        android:id="@+id/start_wearable_activity"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/recent_practice_heading"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:textSize="20sp"
-            android:textAlignment="center"
-            android:text="Recent Practice Summary" />
-
-        <TextView
-            android:id="@+id/recent_practice_exercise_name"
-            android:layout_width="match_parent"
-            android:layout_margin="10dp"
-            android:layout_height="wrap_content" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/recent_practice_stat1Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/recent_practice_stat1Value"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/recent_practice_stat2Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/recent_practice_stat2Value"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/recent_practice_acceleration_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Average Peak Acceleration" />
-
-            <TextView
-                android:id="@+id/recent_practice_acceleration_value"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                />
-        </LinearLayout>
-
-    </LinearLayout>
-
+        android:layout_marginEnd="10dp"
+        android:onClick="onStartWearableActivityClick"
+        android:text="@string/start_wearable_app"
+        android:enabled="false"
+        android:layout_below="@+id/separator"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
 </RelativeLayout>

@@ -2,8 +2,10 @@ package me.srikanth.myapplication.views;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,10 +14,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import me.srikanth.myapplication.R;
 import me.srikanth.myapplication.controllers.Utils;
@@ -126,6 +135,8 @@ public class SummaryFragment extends Fragment {
                     PutDataRequest putDataRequest = dataMapRequest.asPutDataRequest();
                     putDataRequest.setUrgent();
                     Task<DataItem> putTask = Wearable.getDataClient(getActivity()).putDataItem(putDataRequest);
+
+                    //new SendDataToPhoneTask().execute();
                 }
             }
         };
@@ -142,10 +153,65 @@ public class SummaryFragment extends Fragment {
 
         //dataMapRequest.getDataMap().putInt("forwardCount", mModel.getForwardCount().getValue() != null ? mModel.getForwardCount().getValue() : 0);
         //dataMapRequest.getDataMap().putInt("rescueCount", mModel.getRescueCount().getValue() != null ? mModel.getRescueCount().getValue() : 0);
-
-
         // @todo log putTask results
+    }
 
+    private class SendDataToPhoneTask extends AsyncTask<Void, Void, Void> {
 
+        @Override
+        protected Void doInBackground(Void... args) {
+            Collection<String> nodes = getNodes();
+            for (String node : nodes) {
+                Log.d("SendDataToPhoneTask", node);
+                sendSummaryToPhone(node);
+            }
+            return null;
+        }
+    }
+
+    @WorkerThread
+    private Collection<String> getNodes() {
+        HashSet<String> results = new HashSet<>();
+
+        Task<List<Node>> nodeListTask =
+                Wearable.getNodeClient(getActivity()).getConnectedNodes();
+
+        try {
+            // Block on a task and get the result synchronously (because this is on a background
+            // thread).
+            List<Node> nodes = Tasks.await(nodeListTask);
+
+            for (Node node : nodes) {
+                results.add(node.getId());
+            }
+
+        } catch (ExecutionException exception) {
+            Log.e("SummaryFragment", "Task failed: " + exception);
+
+        } catch (InterruptedException exception) {
+            Log.e("SummaryFragment", "Interrupt occurred: " + exception);
+        }
+
+        return results;
+    }
+
+    @WorkerThread
+    private void sendSummaryToPhone(String node) {
+
+        Task<Integer> sendMessageTask =
+                Wearable.getMessageClient(getActivity()).sendMessage(node, "/data-item-received", new byte[2]);
+
+        try {
+            // Block on a task and get the result synchronously
+            // (because this is on a background thread).
+            Integer result = Tasks.await(sendMessageTask);
+            Log.d("sendSummaryToPhone", "Message sent: " + result);
+
+        } catch (ExecutionException exception) {
+            Log.e("sendSummaryToPhone", "Task failed: " + exception);
+
+        } catch (InterruptedException exception) {
+            Log.e("sendSummaryToPhone", "Interrupt occurred: " + exception);
+        }
     }
 }

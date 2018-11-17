@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">Table Tennis Technique</string>
+    <string name="welcome_message">Welcome to the Table Tennis Technique app which allows to track stroke counts and acceleration during practice sessions.
+        This is a phone companion for the wear app</string>
+    <string name="no_wear_devices_linked">You have no Wear devices linked to your phone at this time.</string>
+    <string name="checking_wear_devices_for_app">Checking your Wear devices for app..\n</string>
+    <string name="missing_wear_app_on_all_wear_devices">You are missing the Wear app on all your Wear devices,
+        please click on the button below to install it on those device(s).\n</string>
+    <string name="play_store_app_uri">market://details?id=me.srikanth.myapplication</string>
+    <string name="install_app_on_wear_devices">Install App on Wear device(s)</string>
+    <string name="start_wearable_app">Start wearable App</string>
+    <string name="wear_app_installed_all_devices">Open the Table Tennis Technique app on your wearable device and start your practice!</string>
+    <string name="wear_app_installed_some_devices">Table Tennis Technique Wear app installed on some your device(s).
+        You can now use it on your Wearable device. To install this Wear app on the other devices,
+        please click on the button below.</string>
+    <string name="play_store_request_failed">Play Store Request Failed. Wear device(s) may not support Play Store.</string>
+    <string name="play_store_request_success">Play Store Request successfully sent to Wear device.</string>
 </resources>

@@ -2,74 +2,49 @@ package me.srikanth.myapplication;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.support.annotation.WorkerThread;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.gms.wearable.CapabilityClient;
 import com.google.android.gms.wearable.CapabilityInfo;
-import com.google.android.gms.wearable.DataClient;
-import com.google.android.gms.wearable.DataEvent;
-import com.google.android.gms.wearable.DataEventBuffer;
-import com.google.android.gms.wearable.DataItem;
-import com.google.android.gms.wearable.DataMap;
-import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.wearable.intent.RemoteIntent;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity implements
-        CapabilityClient.OnCapabilityChangedListener, DataClient.OnDataChangedListener {
+        CapabilityClient.OnCapabilityChangedListener {
 
     private static final String TAG = "MainMobileActivity";
-    TextView recentPracticeExerciseNameTextView;
-
-    private static final String WELCOME_MESSAGE = "Welcome to the Table Tennis Technique app which allows to track stroke counts " +
-            "and acceleration during practice sessions. \n\n" +
-            "This is a phone companion for the wear app. \n\n";
-
-    private static final String CHECKING_MESSAGE =
-            WELCOME_MESSAGE + "Checking your Wear devices for app...\n";
-
-    private static final String NO_DEVICES =
-            WELCOME_MESSAGE
-                    + "You have no Wear devices linked to your phone at this time.\n";
-
-    private static final String MISSING_ALL_MESSAGE =
-            WELCOME_MESSAGE
-                    + "You are missing the Wear app on all your Wear devices, please click on the "
-                    + "button below to install it on those device(s).\n";
-
-    private static final String INSTALLED_SOME_DEVICES_MESSAGE =
-            WELCOME_MESSAGE
-                    + "Table Tennis Technique Wear app installed on some your device(s) (%s)!\n\nYou can now use it on your Wearable device.\n\n"
-                    + "To install this Wear app on the other devices, please click on the button "
-                    + "below.\n";
-
-    private static final String INSTALLED_ALL_DEVICES_MESSAGE =
-            WELCOME_MESSAGE
-                    + "Open the Table Tennis Technique app on your wearable device and start your practice!";
 
     // Name of capability listed in Wear app's wear.xml.
-    // IMPORTANT NOTE: This should be named differently than your Phone app's capability.
+    // This should be named differently in Phone app's capability.
     private static final String CAPABILITY_WEAR_APP = "verify_remote_wear_app";
+    private static final String START_ACTIVITY_PATH = "/start-activity";
 
-    // Links to Wear app (Play Store).
-    private static final String PLAY_STORE_APP_URI =
-            "market://details?id=me.srikanth.myapplication";
+    private View mStartActivityBtn;
+    private TextView mInformationTextView;
+    private Button mRemoteOpenButton;
+    private Set<Node> mWearNodesWithApp;
+    private List<Node> mAllConnectedNodes;
 
     // Result from sending RemoteIntent to wear device(s) to open app in play/app store.
     private final ResultReceiver mResultReceiver = new ResultReceiver(new Handler()) {
@@ -80,15 +55,14 @@ public class MainActivity extends AppCompatActivity implements
             if (resultCode == RemoteIntent.RESULT_OK) {
                 Toast toast = Toast.makeText(
                         getApplicationContext(),
-                        "Play Store Request to Wear device successful.",
+                        getString(R.string.play_store_request_success),
                         Toast.LENGTH_SHORT);
                 toast.show();
 
             } else if (resultCode == RemoteIntent.RESULT_FAILED) {
                 Toast toast = Toast.makeText(
                         getApplicationContext(),
-                        "Play Store Request Failed. Wear device(s) may not support Play Store, "
-                                + " that is, the Wear device may be version 1.0.",
+                        getString(R.string.play_store_request_failed),
                         Toast.LENGTH_LONG);
                 toast.show();
 
@@ -98,23 +72,15 @@ public class MainActivity extends AppCompatActivity implements
         }
     };
 
-    private TextView mInformationTextView;
-    private Button mRemoteOpenButton;
-
-    private Set<Node> mWearNodesWithApp;
-    private List<Node> mAllConnectedNodes;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        recentPracticeExerciseNameTextView = findViewById(R.id.recent_practice_exercise_name);
-
         mInformationTextView = findViewById(R.id.information_text_view);
         mRemoteOpenButton = findViewById(R.id.remote_open_button);
 
-        mInformationTextView.setText(CHECKING_MESSAGE);
+        mInformationTextView.setText(getString(R.string.checking_wear_devices_for_app));
 
         mRemoteOpenButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,6 +88,13 @@ public class MainActivity extends AppCompatActivity implements
                 openPlayStoreOnWearDevicesWithoutApp();
             }
         });
+
+        mStartActivityBtn = findViewById(R.id.start_wearable_activity);
+
+
+        // test intent
+        Intent intent = new Intent(this, FirebaseUIActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -130,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements
         super.onPause();
 
         Wearable.getCapabilityClient(this).removeListener(this, CAPABILITY_WEAR_APP);
-        Wearable.getDataClient(this).removeListener(this);
     }
 
     @Override
@@ -138,8 +110,9 @@ public class MainActivity extends AppCompatActivity implements
         Log.d(TAG, "onResume()");
         super.onResume();
 
+        mStartActivityBtn.setEnabled(true);
+
         Wearable.getCapabilityClient(this).addListener(this, CAPABILITY_WEAR_APP);
-        Wearable.getDataClient(this).addListener(this);
 
         // Initial request for devices with our capability, aka, our Wear app installed.
         findWearDevicesWithApp();
@@ -222,33 +195,29 @@ public class MainActivity extends AppCompatActivity implements
             Log.d(TAG, "Waiting on Results for both connected nodes and nodes with app");
 
         } else if (mAllConnectedNodes.isEmpty()) {
-            Log.d(TAG, NO_DEVICES);
-            mInformationTextView.setText(NO_DEVICES);
+            Log.d(TAG, getString(R.string.no_wear_devices_linked));
+            mInformationTextView.setText(getString(R.string.no_wear_devices_linked));
             mRemoteOpenButton.setVisibility(View.INVISIBLE);
 
         } else if (mWearNodesWithApp.isEmpty()) {
-            Log.d(TAG, MISSING_ALL_MESSAGE);
-            mInformationTextView.setText(MISSING_ALL_MESSAGE);
+            Log.d(TAG, getString(R.string.missing_wear_app_on_all_wear_devices));
+            mInformationTextView.setText(getString(R.string.missing_wear_app_on_all_wear_devices));
             mRemoteOpenButton.setVisibility(View.VISIBLE);
 
         } else if (mWearNodesWithApp.size() < mAllConnectedNodes.size()) {
             // TODO: Add your code to communicate with the wear app(s) via
             // Wear APIs (MessageApi, DataApi, etc.)
 
-            String installMessage =
-                    String.format(INSTALLED_SOME_DEVICES_MESSAGE, mWearNodesWithApp);
-            Log.d(TAG, installMessage);
-            mInformationTextView.setText(installMessage);
+            Log.d(TAG, getString(R.string.wear_app_installed_some_devices));
+            mInformationTextView.setText(getString(R.string.wear_app_installed_some_devices));
             mRemoteOpenButton.setVisibility(View.VISIBLE);
 
         } else {
             // TODO: Add your code to communicate with the wear app(s) via
             // Wear APIs (MessageApi, DataApi, etc.)
 
-            String installMessage =
-                    String.format(INSTALLED_ALL_DEVICES_MESSAGE, mWearNodesWithApp);
-            Log.d(TAG, installMessage);
-            mInformationTextView.setText(installMessage);
+            Log.d(TAG, getString(R.string.wear_app_installed_all_devices));
+            mInformationTextView.setText(getString(R.string.wear_app_installed_all_devices));
             mRemoteOpenButton.setVisibility(View.INVISIBLE);
 
         }
@@ -272,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements
             Intent intent =
                     new Intent(Intent.ACTION_VIEW)
                             .addCategory(Intent.CATEGORY_BROWSABLE)
-                            .setData(Uri.parse(PLAY_STORE_APP_URI));
+                            .setData(Uri.parse(getString(R.string.play_store_app_uri)));
 
             for (Node node : nodesWithoutApp) {
                 RemoteIntent.startRemoteActivity(
@@ -284,53 +253,70 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    @Override
-    public void onDataChanged(DataEventBuffer dataEvents) {
-        Log.d("onDataChanged", dataEvents + "");
+    /** Sends an RPC to start a fullscreen Activity on the wearable. */
+    public void onStartWearableActivityClick(View view) {
+        Log.d(TAG, "Generating RPC");
 
-        LinearLayout recentPracticeLinearLayout = findViewById(R.id.recent_practice_wrapper);
-        TextView recentPracticeAccelerationValue = findViewById(R.id.recent_practice_acceleration_value);
-        TextView recentPracticeStat1Label = findViewById(R.id.recent_practice_stat1Label);
-        TextView recentPracticeStat1Value = findViewById(R.id.recent_practice_stat1Value);
-        TextView recentPracticeStat2Label = findViewById(R.id.recent_practice_stat2Label);
-        TextView recentPracticeStat2Value = findViewById(R.id.recent_practice_stat2Value);
+        // Trigger an AsyncTask that will query for a list of connected nodes and send a
+        // "start-activity" message to each connected node.
+        new StartWearableActivityTask().execute();
+    }
 
-        for (DataEvent event : dataEvents) {
-            Log.d("event type", event.getType() + "");
-            if (event.getType() == DataEvent.TYPE_CHANGED) {
-                DataItem item = event.getDataItem();
-                if (item.getUri().getPath().compareTo("/practiceSummary") == 0) {
-                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+    private class StartWearableActivityTask extends AsyncTask<Void, Void, Void> {
 
-                    if (dataMap.getInt("avgPeakAcceleration") > 0) {
-
-                        recentPracticeLinearLayout.setVisibility(View.VISIBLE);
-                        recentPracticeExerciseNameTextView.setText(dataMap.getString("exerciseName"));
-
-                        recentPracticeAccelerationValue.setText(String.valueOf(dataMap.getInt("avgPeakAcceleration")));
-                        recentPracticeAccelerationValue.append(" mph");
-
-                        if (dataMap.getString("exerciseName").toLowerCase().contains("drive")) {
-                            Log.d(dataMap.getString("exerciseName"), "drive");
-                            recentPracticeStat1Label.setText("Drive count");
-                            recentPracticeStat1Value.setText(String.valueOf(dataMap.getInt("forwardCount")));
-
-                            recentPracticeStat2Label.setText("Loop / Drive count");
-                            recentPracticeStat2Value.setText(String.valueOf(dataMap.getInt("rescueCount")));
-                        } else {
-                            Log.d(dataMap.getString("exerciseName"), "loop");
-                            recentPracticeStat1Label.setText("Loop count");
-                            recentPracticeStat1Value.setText(String.valueOf(dataMap.getInt("rescueCount")));
-
-                            recentPracticeStat2Label.setText("Loop / Drive count");
-                            recentPracticeStat2Value.setText(String.valueOf(dataMap.getInt("forwardCount")));
-                        }
-                        //summaryTextView.append(String.valueOf(dataMap.getInt("forwardCount")));
-                        //summaryTextView.append(String.valueOf(dataMap.getInt("rescueCount")));
-                        //summaryTextView.append(String.valueOf(dataMap.getInt("avgPeakAcceleration")));
-                    }
-                }
+        @Override
+        protected Void doInBackground(Void... args) {
+            Collection<String> nodes = getNodes();
+            for (String node : nodes) {
+                sendStartActivityMessage(node);
             }
+            return null;
+        }
+    }
+
+    @WorkerThread
+    private Collection<String> getNodes() {
+        HashSet<String> results = new HashSet<>();
+
+        Task<List<Node>> nodeListTask =
+                Wearable.getNodeClient(getApplicationContext()).getConnectedNodes();
+
+        try {
+            // Block on a task and get the result synchronously
+            // (because this is on a background thread).
+            List<Node> nodes = Tasks.await(nodeListTask);
+
+            for (Node node : nodes) {
+                results.add(node.getId());
+            }
+
+        } catch (ExecutionException exception) {
+            Log.e(TAG, "Task failed: " + exception);
+
+        } catch (InterruptedException exception) {
+            Log.e(TAG, "Interrupt occurred: " + exception);
+        }
+
+        return results;
+    }
+
+    @WorkerThread
+    private void sendStartActivityMessage(String node) {
+
+        Task<Integer> sendMessageTask =
+                Wearable.getMessageClient(this).sendMessage(node, START_ACTIVITY_PATH, new byte[0]);
+
+        try {
+            // Block on a task and get the result synchronously
+            // (because this is on a background thread).
+            Integer result = Tasks.await(sendMessageTask);
+            Log.d(TAG, "Message sent: " + result);
+
+        } catch (ExecutionException exception) {
+            Log.e(TAG, "Task failed: " + exception);
+
+        } catch (InterruptedException exception) {
+            Log.e(TAG, "Interrupt occurred: " + exception);
         }
     }
 
